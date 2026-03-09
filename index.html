@@ -235,8 +235,8 @@ tr:hover td{background:var(--bg3)}
   .race-tab{padding:8px 10px;font-size:9px}
 
   .race-panel{padding:12px 10px}
-  .strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
-  .sc{min-width:0;padding:8px 10px;width:100%}
+  .strip{display:flex;flex-wrap:nowrap;gap:8px;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .sc{flex:0 0 150px;min-width:150px;padding:8px 10px}
   .sv{font-size:14px}
   .sl{font-size:10px}
 
@@ -257,7 +257,7 @@ tr:hover td{background:var(--bg3)}
   .replayControls input[type="range"]{width:100% !important;min-width:0}
 
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--muted2);border-radius:6px}
-  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse}
+  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse;width:max-content}
 
   .course-and-right{display:flex !important;flex-direction:column;gap:8px !important}
   .course-card{order:2}
@@ -265,7 +265,7 @@ tr:hover td{background:var(--bg3)}
   .wind-card{order:3}
 
 
-  .race-panel{padding:12px 10px;overflow-x:hidden}
+  .race-panel{padding:12px 10px}
   .race-panel > *,
   .race-panel .mc,
   .race-panel .nc,
@@ -286,7 +286,7 @@ tr:hover td{background:var(--bg3)}
 }
 
 @media(max-width:560px){
-  .strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .strip{display:flex;flex-wrap:nowrap;overflow-x:auto}
   .replayControls{justify-content:flex-start;font-size:9px}
   #cWindDay{height:180px}
   .bottom-actions{padding:10px;flex-direction:column}

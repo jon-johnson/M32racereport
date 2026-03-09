@@ -265,11 +265,15 @@ tr:hover td{background:var(--bg3)}
   .wind-card{order:3}
 
 
+  .race-panel{padding:12px 10px;overflow-x:hidden}
   .race-panel > *,
   .race-panel .mc,
   .race-panel .nc,
   .race-panel .table-scroll,
-  .course-and-right > div{width:100%}
+  .course-and-right > div,
+  .map2,
+  .replayStartGrid,
+  .course-and-right{width:100%;max-width:100%}
 
   .bottom-actions{justify-content:stretch;align-items:stretch}
   .bottom-controls{display:grid;grid-template-columns:1fr;width:100%}
@@ -661,7 +665,7 @@ let OFFICIAL_RESULTS = OFFICIAL_RESULTS_BY_DAY[0] || {};
 // RC_SNS = RC boat(s), PIN_SN = pin end buoy
 const GATE_SNS = {
   WW: [13498, 15255],
-  LW: [14292, 14293],
+  LW: [15025, 15205],
   RC_SNS: [13201],
   PIN_SN: 14293,
 };
@@ -2889,28 +2893,11 @@ function renderRacePanel(panelEl, rd){
       <div class="sc"><div class="sv">${slBrg!=null?slBrg.toFixed(1)+'°':'—'}</div><div class="sl">START LINE</div></div>
       <div class="sc"><div class="sv">${slLen}m</div><div class="sl">LINE LENGTH</div></div>
       ${WF!=null?`<div class="sc"><div class="sv">${WF.toFixed(0)}°</div><div class="sl">WIND (INFERRED)</div></div>`:''}
-    </div>
-
-    <!-- Geometry bar -->
-    <div class="gb-row">
-      <div class="gb"><div class="gb-lbl">Course axis (LW→WW)</div>
-        <div class="gb-val">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div>
-        <div class="gb-sub">${caLen}m WW leg</div></div>
-      <div class="gb"><div class="gb-lbl">Start line (RC→Pin)</div>
-        <div class="gb-val">${slBrg!=null?slBrg.toFixed(1)+'°':'—'}</div>
-        <div class="gb-sub">${slLen}m</div></div>
       ${rm&&MID?(()=>{
-        // Bearing from start line midpoint to reach mark — true reach leg direction
         const rlB=brg(MID.lat,MID.lon,rm.lat,rm.lon);
         const rlDist=Math.round(hav(MID.lat,MID.lon,rm.lat,rm.lon));
         const twa=WF!=null?Math.abs(((rlB-WF+180+360)%360)-180):null;
-        const inf=rm.inference;
-        const confCol=inf&&inf.confidence==='HIGH'?'var(--green)':inf&&inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
-        return '<div class="gb"><div class="gb-lbl">Reach leg (midline→mark)</div>'
-          +'<div class="gb-val">'+rlDist+'m'+(twa!=null?' · '+twa.toFixed(0)+'° TWA':'')+'</div>'
-          +'<div class="gb-sub">'+rlB.toFixed(1)+'° bearing · T+'+rm.t_s.toFixed(0)+'s'
-          +(inf?' · <span style="color:'+confCol+';font-size:8px">'+inf.confidence+'</span>':'')
-          +'</div></div>';
+        return `<div class="sc"><div class="sv">${rlDist}m${twa!=null?' · '+twa.toFixed(0)+'°':''}</div><div class="sl">REACH LEG</div></div>`;
       })():''}
     </div>
 
@@ -4805,15 +4792,12 @@ function handleReachMarkClick(e, canvasEl){
         sc.querySelector('.sv').textContent = rlDist + 'm';
       }
     });
-    // Update geometry bar reach leg entry
-    const gbRow = document.querySelector(`#racePanel${rd._dayIdx}_${raceNum} .gb-row`);
-    if(gbRow){
-      const reachGb = [...gbRow.querySelectorAll('.gb')].find(el=>el.querySelector('.gb-lbl')?.textContent.includes('Reach'));
-      if(reachGb){
-        reachGb.querySelector('.gb-val').textContent = rlDist + 'm' + (twa!=null ? ' · ' + twa.toFixed(0)+'° TWA' : '');
-        reachGb.querySelector('.gb-sub').textContent = rlB.toFixed(1) + '° bearing (Pin→mark)';
+    // Update REACH LEG in strip
+    scElems.forEach(sc => {
+      if(sc.querySelector('.sl')?.textContent === 'REACH LEG'){
+        sc.querySelector('.sv').textContent = rlDist + 'm' + (twa!=null ? ' · ' + twa.toFixed(0)+'°' : '');
       }
-    }
+    });
   }
   // Show confirmation toast
   const rlDistShow = rd.PIN ? Math.round(hav(rd.PIN.lat, rd.PIN.lon, lat, lon)) : '?';

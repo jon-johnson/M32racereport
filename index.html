@@ -84,6 +84,7 @@ a{color:var(--cyan);text-decoration:none}
 
 .replayStartGrid{display:grid;grid-template-columns:minmax(360px,460px) minmax(0,1fr);gap:12px;align-items:start;margin-bottom:8px}
 .replayStartGrid>.mc{min-width:0}
+.replayStartGrid>*{min-width:0}
 .replayPortraitCard{max-width:460px;width:100%;justify-self:start}
 .replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto}
 .replayControls{display:flex;align-items:center;gap:8px;font-size:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -253,11 +254,12 @@ tr:hover td{background:var(--bg3)}
   .replayStartGrid{grid-template-columns:1fr}
   .replayPortraitCard{max-width:none;width:100%;justify-self:stretch}
   .replayCanvasPortrait{max-width:none;width:100%}
+  .replayDataCol{min-width:0;width:100%;max-width:none;justify-self:stretch}
   .replayControls{justify-content:flex-start;width:100%}
   .replayControls input[type="range"]{width:100% !important;min-width:0}
 
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--muted2);border-radius:6px}
-  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse;width:max-content}
+  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse;width:100%}
 
   .map2{grid-template-columns:1fr;gap:10px}
   .course-and-right{display:flex !important;flex-direction:column;gap:8px !important}
@@ -2930,7 +2932,7 @@ function renderRacePanel(panelEl, rd){
         <canvas id="${raceDomId(rd,'cReplay')}" class="replayCanvasPortrait"></canvas>
       </div>
 
-      <div>
+      <div class="replayDataCol">
         <!-- Start table — aligned under T+50 -->
         <div class="sh">START REPORT — boat-by-boat</div>
         <div class="table-scroll"><table class="start-table" id="${startTableId}"><thead><tr>

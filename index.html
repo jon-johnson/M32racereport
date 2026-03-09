@@ -16,7 +16,7 @@
   --good:#00ff99;--warn:#ffcc00;--bad:#ff4466;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:clamp(13px,2.8vw,15px);min-height:100vh;line-height:1.4}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;min-height:100vh}
 a{color:var(--cyan);text-decoration:none}
 
 /* ── HEADER ── */
@@ -49,7 +49,7 @@ a{color:var(--cyan);text-decoration:none}
 
 /* ── CONTENT PANELS ── */
 .day-panel{display:none}.day-panel.active{display:block}
-.race-panel{display:none;padding:16px 20px;max-width:1200px;margin:0 auto}.race-panel.active{display:block}
+.race-panel{display:none;padding:16px 20px}.race-panel.active{display:block}
 
 /* ── LOADING / STATUS ── */
 .load-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px}
@@ -201,6 +201,11 @@ tr:hover td{background:var(--bg3)}
 /* ── WIND CANVAS ── */
 #cWindDay{display:block;width:100%;height:120px}
 
+.bottom-actions{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px 18px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
+.course-card{grid-column:1;grid-row:1 / span 2}
+.official-card{grid-column:2;grid-row:1}
+.wind-card{grid-column:2;grid-row:2}
+
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
   .map2{grid-template-columns:1fr}
@@ -209,13 +214,11 @@ tr:hover td{background:var(--bg3)}
 }
 
 @media(max-width:900px){
-  body{font-size:14px}
+  body{font-size:13px}
   .hdr{padding:10px 12px;flex-wrap:wrap;gap:10px}
   .hdr-title{font-size:14px;letter-spacing:1px}
   .hdr-sub{font-size:10px}
   .hdr-r{margin-left:0;width:100%;justify-content:space-between;font-size:10px}
-  .export-btn{width:100%;margin-right:0 !important;padding:10px 12px !important;font-size:11px !important}
-
   .day-tabs,.race-tabs{padding-left:10px;padding-right:10px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
   .day-tabs{flex-wrap:nowrap}
   .race-tabs{flex-wrap:nowrap}
@@ -237,8 +240,21 @@ tr:hover td{background:var(--bg3)}
   .sh{font-size:10px;margin:12px 0 8px}
   .mh{font-size:9px;padding:8px 10px}
 
-  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;font-size:11px}
   th,td{padding:6px 8px}
+
+  .replayStartGrid{grid-template-columns:1fr}
+  .replayPortraitCard{max-width:100%;justify-self:stretch}
+  .replayCanvasPortrait{max-width:100%}
+  .replayControls{justify-content:flex-start;width:100%}
+  .replayControls input[type="range"]{width:100% !important;min-width:0}
+
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--muted2);border-radius:6px}
+  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse}
+
+  .course-and-right{display:flex !important;flex-direction:column;gap:8px !important}
+  .course-card{order:2}
+  .official-card{order:1}
+  .wind-card{order:3}
 
   .ds-avg-table{font-size:11px}
   .ds-avg-table th{font-size:9px}
@@ -250,6 +266,8 @@ tr:hover td{background:var(--bg3)}
   .strip{grid-template-columns:1fr}
   .replayControls{justify-content:flex-start;font-size:9px}
   #cWindDay{height:180px}
+  .bottom-actions{padding:10px;flex-direction:column}
+  .bottom-actions .export-btn{width:100%;padding:10px 12px !important;font-size:11px !important}
 }
 
 /* ── PRINT / PDF EXPORT ── */
@@ -396,24 +414,6 @@ tr:hover td{background:var(--bg3)}
     <div class="hdr-title" id="regattatitle">M32 · REGATTA REPORT</div>
     <div class="hdr-sub" id="regattasub">Vakaros RaceSense telemetry analysis</div>
   </div>
-  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="
-  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
-  background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
-  padding:6px 14px;border-radius:3px;cursor:pointer;margin-right:8px;
-  transition:all .15s"
-  onmouseover="this.style.background='rgba(0,204,255,.2)'"
-  onmouseout="this.style.background='rgba(0,204,255,.1)'">
-  ⬇ PDF — <span id="exportDayLabel"></span>
-</button>
-<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="
-  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
-  background:rgba(0,255,153,.08);border:1px solid rgba(0,255,153,.35);color:#00ff99;
-  padding:6px 14px;border-radius:3px;cursor:pointer;margin-right:8px;
-  transition:all .15s"
-  onmouseover="this.style.background='rgba(0,255,153,.16)'"
-  onmouseout="this.style.background='rgba(0,255,153,.08)'">
-  POLAR — <span id="polarStatusLabel">BASE</span>
-</button>
 <div class="hdr-r">
     <span id="hdrFleet">—</span>
     <span id="hdrDays" class="hi">—</span>
@@ -425,6 +425,28 @@ tr:hover td{background:var(--bg3)}
 
 <!-- Day panels (generated dynamically) -->
 <div id="dayPanels"></div>
+
+<!-- Bottom actions -->
+<div class="bottom-actions" id="bottomActions">
+  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="
+  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
+  background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
+  padding:6px 14px;border-radius:3px;cursor:pointer;
+  transition:all .15s"
+  onmouseover="this.style.background='rgba(0,204,255,.2)'"
+  onmouseout="this.style.background='rgba(0,204,255,.1)'">
+  ⬇ PDF — <span id="exportDayLabel"></span>
+</button>
+<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="
+  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
+  background:rgba(0,255,153,.08);border:1px solid rgba(0,255,153,.35);color:#00ff99;
+  padding:6px 14px;border-radius:3px;cursor:pointer;
+  transition:all .15s"
+  onmouseover="this.style.background='rgba(0,255,153,.16)'"
+  onmouseout="this.style.background='rgba(0,255,153,.08)'">
+  POLAR — <span id="polarStatusLabel">BASE</span>
+</button>
+</div>
 
 <script>
 'use strict';
@@ -2901,7 +2923,7 @@ function renderRacePanel(panelEl, rd){
       <div>
         <!-- Start table — aligned under T+50 -->
         <div class="sh">START REPORT — boat-by-boat</div>
-        <table class="start-table" id="${startTableId}"><thead><tr>
+        <div class="table-scroll"><table class="start-table" id="${startTableId}"><thead><tr>
       <th data-col="rank" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','rank','asc',true)">#</th>
       <th>Boat</th>
       <th data-col="dtl" data-dir="desc" style="cursor:pointer" title="Click to sort. DTL is signed: positive = pre-start side (safe), negative = course side (OCS side)" onclick="sortTable('${startTableId}','dtl','desc',true)">DTL@Gun ⇅<br><span style="font-weight:400;font-size:7px">+ safe  − course</span></th>
@@ -2909,11 +2931,11 @@ function renderRacePanel(panelEl, rd){
       <th data-col="spd" data-dir="desc" style="cursor:pointer" onclick="sortTable('${startTableId}','spd','desc',true)">Speed@Gun ⇅</th>
       <th data-col="cross" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','cross','asc',true)">Line cross ⇅<br><span style="font-weight:400;font-size:7px">sec after gun</span></th>
       <th data-col="t95" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','t95','asc',true)">T→95% ⇅<br><span style="font-weight:400;font-size:7px">secs to reach speed</span></th>
-    </tr></thead><tbody id="${startBodyId}"></tbody></table>
+    </tr></thead><tbody id="${startBodyId}"></tbody></table></div>
 
     <!-- PAGE 2 — Leg 1 table first -->
     <div class="sh page2-start">LEG 1 — REACH ORDER at T+50s · ranked by dist from pin</div>
-    <table id="${l1TableId}"><thead><tr>
+    <div class="table-scroll"><table id="${l1TableId}"><thead><tr>
       <th data-col="rank" style="cursor:pointer" onclick="sortTable('${l1TableId}','rank','asc',false)">#</th>
       <th>Boat</th>
       <th data-col="dist" style="cursor:pointer" onclick="sortTable('${l1TableId}','dist','desc',false)">Dist from Pin ⇅</th>
@@ -2922,25 +2944,14 @@ function renderRacePanel(panelEl, rd){
       <th data-col="sog" style="cursor:pointer" onclick="sortTable('${l1TableId}','sog','desc',false)">Avg SOG ⇅</th>
       <th data-col="heel" style="cursor:pointer" onclick="sortTable('${l1TableId}','heel','desc',false)">Avg heel ⇅</th>
       <th data-col="heelsd" style="cursor:pointer" onclick="sortTable('${l1TableId}','heelsd','asc',false)">Heel σ ⇅<br><span style="font-weight:400;font-size:8px">100%=least stable</span></th>
-    </tr></thead><tbody id="${l1BodyId}"></tbody></table>
+    </tr></thead><tbody id="${l1BodyId}"></tbody></table></div>
 
-    <!-- Course (left) + Official results & Wind (right) -->
-    <div class="sh">COURSE OVERVIEW</div>
+    <!-- Course + Official results + Wind -->
     <div class="course-and-right" style="display:grid;grid-template-columns:440px 1fr;gap:16px;margin-bottom:12px;align-items:start">
-
-      <!-- Left: course map -->
-      <div class="mc" style="flex-shrink:0">
-        <div class="mh">FULL RACE TRACKS · GATES · REACH MARK · COURSE AXIS &nbsp;<span style="color:var(--orange);font-size:8px">✦ CLICK TO PLACE REACH MARK</span></div>
-        <canvas id="${cCourseId}"></canvas>
-      </div>
-
-      <!-- Right: official results + wind stacked -->
-      <div style="display:flex;flex-direction:column;gap:8px">
-
+      <div class="official-card">
         ${(()=>{
           const or=(OFFICIAL_RESULTS_BY_DAY[rd.event._dayIdx||0]||OFFICIAL_RESULTS_BY_DAY[0])[raceNum];
           if(!or||!Object.keys(or).length) return '';
-          // Build reach position lookup from l1Order
           const reachPos = {};
           (l1Order||[]).forEach((sail,i)=>{ reachPos[sail]=i+1; });
           const sorted=Object.entries(or).filter(([,p])=>typeof p==='number'&&p<90).sort((a,b)=>a[1]-b[1]);
@@ -2978,14 +2989,22 @@ function renderRacePanel(panelEl, rd){
             +'<tbody>'+rows+'</tbody>'
             +'</table>';
         })()}
+      </div>
 
-        <!-- Wind — full legend needs sufficient height -->
+      <div class="course-card">
+        <div class="sh" style="margin-top:0">COURSE OVERVIEW</div>
+        <div class="mc" style="flex-shrink:0">
+          <div class="mh">FULL RACE TRACKS · GATES · REACH MARK · COURSE AXIS &nbsp;<span style="color:var(--orange);font-size:8px">✦ CLICK TO PLACE REACH MARK</span></div>
+          <canvas id="${cCourseId}"></canvas>
+        </div>
+      </div>
+
+      <div class="wind-card">
         <div class="sh" style="font-size:7px;opacity:0.7;margin-top:2px">WIND INFERENCE</div>
         <div class="mc">
           <div class="mh" style="font-size:7px">PORT/STBD TACK &amp; GYBE SEGMENTS · INFERRED DIRECTION</div>
           <canvas id="${cWindId}" style="display:block;margin:0 auto"></canvas>
         </div>
-
       </div>
     </div>
 

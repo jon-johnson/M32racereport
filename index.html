@@ -16,7 +16,7 @@
   --good:#00ff99;--warn:#ffcc00;--bad:#ff4466;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:clamp(13px,2.8vw,15px);min-height:100vh;line-height:1.4}
 a{color:var(--cyan);text-decoration:none}
 
 /* ── HEADER ── */
@@ -49,7 +49,7 @@ a{color:var(--cyan);text-decoration:none}
 
 /* ── CONTENT PANELS ── */
 .day-panel{display:none}.day-panel.active{display:block}
-.race-panel{display:none;padding:16px 20px}.race-panel.active{display:block}
+.race-panel{display:none;padding:16px 20px;max-width:1200px;margin:0 auto}.race-panel.active{display:block}
 
 /* ── LOADING / STATUS ── */
 .load-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px}
@@ -206,6 +206,50 @@ tr:hover td{background:var(--bg3)}
   .map2{grid-template-columns:1fr}
   .race-tabs{gap:1px}
   .race-tab{padding:5px 8px;font-size:9px}
+}
+
+@media(max-width:900px){
+  body{font-size:14px}
+  .hdr{padding:10px 12px;flex-wrap:wrap;gap:10px}
+  .hdr-title{font-size:14px;letter-spacing:1px}
+  .hdr-sub{font-size:10px}
+  .hdr-r{margin-left:0;width:100%;justify-content:space-between;font-size:10px}
+  .export-btn{width:100%;margin-right:0 !important;padding:10px 12px !important;font-size:11px !important}
+
+  .day-tabs,.race-tabs{padding-left:10px;padding-right:10px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+  .day-tabs{flex-wrap:nowrap}
+  .race-tabs{flex-wrap:nowrap}
+  .day-tab,.race-tab{flex:0 0 auto}
+  .day-tab{padding:9px 12px;font-size:10px}
+  .race-tab{padding:8px 10px;font-size:9px}
+
+  .race-panel{padding:12px 10px}
+  .strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .sc{min-width:0;padding:8px 10px}
+  .sv{font-size:14px}
+  .sl{font-size:10px}
+
+  .gb-row{gap:8px}
+  .gb{min-width:0;padding:10px}
+  .gb-val{font-size:14px}
+  .gb-lbl,.gb-sub{font-size:10px}
+
+  .sh{font-size:10px;margin:12px 0 8px}
+  .mh{font-size:9px;padding:8px 10px}
+
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;font-size:11px}
+  th,td{padding:6px 8px}
+
+  .ds-avg-table{font-size:11px}
+  .ds-avg-table th{font-size:9px}
+  .ds-avg-table .boat-name{font-size:11px}
+  .ds-avg-table .boat-team{font-size:9px}
+}
+
+@media(max-width:560px){
+  .strip{grid-template-columns:1fr}
+  .replayControls{justify-content:flex-start;font-size:9px}
+  #cWindDay{height:180px}
 }
 
 /* ── PRINT / PDF EXPORT ── */

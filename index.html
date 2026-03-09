@@ -201,7 +201,15 @@ tr:hover td{background:var(--bg3)}
 /* ── WIND CANVAS ── */
 #cWindDay{display:block;width:100%;height:120px}
 
-.bottom-actions{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px 18px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
+.bottom-actions{display:flex;gap:10px;justify-content:flex-end;align-items:flex-end;flex-wrap:wrap;padding:12px 20px 18px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
+.bottom-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.tws-box{background:var(--bg3);border:1px solid var(--muted2);border-radius:6px;padding:8px 10px;min-width:250px}
+.tws-title{font:700 9px Orbitron,monospace;color:var(--muted);letter-spacing:.8px;margin-bottom:6px}
+.tws-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tws-input{width:90px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif}
+.action-btn{font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;padding:6px 10px;border-radius:6px;cursor:pointer}
+.action-btn.alt{background:rgba(122,154,176,.08);border-color:rgba(122,154,176,.35);color:var(--muted)}
+.tws-state{font-size:10px;color:var(--muted2)}
 .course-card{grid-column:1;grid-row:1 / span 2}
 .official-card{grid-column:2;grid-row:1}
 .wind-card{grid-column:2;grid-row:2}
@@ -227,8 +235,8 @@ tr:hover td{background:var(--bg3)}
   .race-tab{padding:8px 10px;font-size:9px}
 
   .race-panel{padding:12px 10px}
-  .strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .sc{min-width:0;padding:8px 10px}
+  .strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+  .sc{min-width:0;padding:8px 10px;width:100%}
   .sv{font-size:14px}
   .sl{font-size:10px}
 
@@ -256,6 +264,17 @@ tr:hover td{background:var(--bg3)}
   .official-card{order:1}
   .wind-card{order:3}
 
+
+  .race-panel > *,
+  .race-panel .mc,
+  .race-panel .nc,
+  .race-panel .table-scroll,
+  .course-and-right > div{width:100%}
+
+  .bottom-actions{justify-content:stretch;align-items:stretch}
+  .bottom-controls{display:grid;grid-template-columns:1fr;width:100%}
+  .tws-box{min-width:0;width:100%}
+  .tws-row .action-btn{flex:1 1 auto;text-align:center}
   .ds-avg-table{font-size:11px}
   .ds-avg-table th{font-size:9px}
   .ds-avg-table .boat-name{font-size:11px}
@@ -263,11 +282,13 @@ tr:hover td{background:var(--bg3)}
 }
 
 @media(max-width:560px){
-  .strip{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(3,minmax(0,1fr))}
   .replayControls{justify-content:flex-start;font-size:9px}
   #cWindDay{height:180px}
   .bottom-actions{padding:10px;flex-direction:column}
   .bottom-actions .export-btn{width:100%;padding:10px 12px !important;font-size:11px !important}
+  .tws-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .tws-row .tws-input{grid-column:1 / -1;width:100%}
 }
 
 /* ── PRINT / PDF EXPORT ── */
@@ -428,6 +449,26 @@ tr:hover td{background:var(--bg3)}
 
 <!-- Bottom actions -->
 <div class="bottom-actions" id="bottomActions">
+  <div class="bottom-controls">
+    <div class="tws-box">
+      <div class="tws-title">DAY TRUE WIND SPEED</div>
+      <div class="tws-row">
+        <input id="dayTwsInputBottom" class="tws-input" type="number" min="1" step="0.1" placeholder="kt">
+        <button class="action-btn" onclick="saveCurrentDayTwsOverride()">SAVE DAY</button>
+        <button class="action-btn alt" onclick="clearCurrentDayTwsOverride()">CLEAR DAY</button>
+      </div>
+      <div id="dayTwsStateBottom" class="tws-state"></div>
+    </div>
+    <div class="tws-box">
+      <div class="tws-title">RACE TRUE WIND SPEED</div>
+      <div class="tws-row">
+        <input id="raceTwsInputBottom" class="tws-input" type="number" min="1" step="0.1" placeholder="kt">
+        <button class="action-btn" onclick="saveCurrentRaceTwsOverride()">SAVE RACE</button>
+        <button class="action-btn alt" onclick="clearCurrentRaceTwsOverride()">CLEAR RACE</button>
+      </div>
+      <div id="raceTwsStateBottom" class="tws-state"></div>
+    </div>
+  </div>
   <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="
   font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
   background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
@@ -447,6 +488,7 @@ tr:hover td{background:var(--bg3)}
   POLAR — <span id="polarStatusLabel">BASE</span>
 </button>
 </div>
+
 
 <script>
 'use strict';
@@ -683,9 +725,9 @@ function updateRaceTwsUi(rd){
   if(!rd) return;
   const info=getEffectiveTwsInfo(rd);
   const id=raceDomId(rd,'twsState');
-  const el=document.getElementById(id);
-  if(el) el.textContent = info.tws!=null ? `Using ${info.tws.toFixed(1)} kt (${info.source} override)` : 'No manual TWS set · report still works, but polar updates are disabled';
-  const inp=document.getElementById(raceDomId(rd,'twsInput'));
+  const el=document.getElementById('raceTwsStateBottom') || document.getElementById(id);
+  if(el) el.textContent = info.tws!=null ? `Using ${info.tws.toFixed(1)} kt (${info.source} override)` : 'No race override · day/base values apply';
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput'));
   if(inp && document.activeElement!==inp){ inp.value = info.source==='race' && info.tws!=null ? info.tws : ''; }
 }
 function rerenderVisibleRace(rd){
@@ -700,14 +742,14 @@ function updateDayTwsUi(di){
   const store=getTwsOverrideStore();
   const dayKey=dayOverrideKeyFromEvent(event, di);
   const v=store.days?.[dayKey]?.tws;
-  const inp=document.getElementById(`dayTwsInput${di}`);
+  const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`);
   if(inp && document.activeElement!==inp){ inp.value = Number.isFinite(v) ? v : ''; }
-  const st=document.getElementById(`dayTwsState${di}`);
+  const st=document.getElementById('dayTwsStateBottom') || document.getElementById(`dayTwsState${di}`);
   if(st) st.textContent = Number.isFinite(v) ? `Day override active: ${(+v).toFixed(1)} kt` : 'No day override';
 }
 function saveDayTwsOverride(di){
   const event=EVENTS?.[di]; if(!event) return;
-  const inp=document.getElementById(`dayTwsInput${di}`);
+  const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`);
   const raw=inp ? inp.value.trim() : '';
   const store=getTwsOverrideStore();
   const dayKey=dayOverrideKeyFromEvent(event, di);
@@ -718,16 +760,17 @@ function saveDayTwsOverride(di){
   }
   safeLocalSet(POLAR_TWS_OVERRIDE_KEY, store);
   updateDayTwsUi(di);
+  syncBottomTwsControls();
   for(const rd of (event._races||[])){ if(rd) updateRaceTwsUi(rd); }
   refreshPolarDataForDay(event, di);
   const active=(event._races||[]).find(r=>r && document.getElementById(`racePanel${r._dayIdx}_${r.raceNum}`)?.offsetParent!==null);
   if(active) rerenderVisibleRace(active);
   updatePolarStatusLabel();
 }
-function clearDayTwsOverride(di){ const inp=document.getElementById(`dayTwsInput${di}`); if(inp) inp.value=''; saveDayTwsOverride(di); }
+function clearDayTwsOverride(di){ const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`); if(inp) inp.value=''; saveDayTwsOverride(di); }
 function saveRaceTwsOverride(di, raceNum){
   const event=EVENTS?.[di]; const rd=(event?._races||[]).find(r=>r && r.raceNum===raceNum); if(!rd) return;
-  const inp=document.getElementById(raceDomId(rd,'twsInput'));
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput'));
   const raw=inp ? inp.value.trim() : '';
   const store=getTwsOverrideStore();
   const raceKey=raceOverrideKeyFromRd(rd);
@@ -744,9 +787,30 @@ function saveRaceTwsOverride(di, raceNum){
 }
 function clearRaceTwsOverride(di, raceNum){
   const event=EVENTS?.[di]; const rd=(event?._races||[]).find(r=>r && r.raceNum===raceNum); if(!rd) return;
-  const inp=document.getElementById(raceDomId(rd,'twsInput')); if(inp) inp.value='';
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput')); if(inp) inp.value='';
   saveRaceTwsOverride(di, raceNum);
 }
+
+function getActiveRaceRd(){
+  const event=EVENTS?.[currentDay]; if(!event) return null;
+  const raceNum=event._activeRaceNum;
+  if(Number.isFinite(raceNum)) return (event._races||[]).find(r=>r && r.raceNum===raceNum) || null;
+  return (event._races||[]).find(r=>r && document.getElementById(`racePanel${r._dayIdx}_${r.raceNum}`)?.offsetParent!==null) || null;
+}
+function saveCurrentDayTwsOverride(){ saveDayTwsOverride(currentDay); }
+function clearCurrentDayTwsOverride(){ clearDayTwsOverride(currentDay); }
+function saveCurrentRaceTwsOverride(){ const rd=getActiveRaceRd(); if(!rd){ alert('Load/select a race first'); return; } saveRaceTwsOverride(currentDay, rd.raceNum); }
+function clearCurrentRaceTwsOverride(){ const rd=getActiveRaceRd(); if(!rd){ alert('Load/select a race first'); return; } clearRaceTwsOverride(currentDay, rd.raceNum); }
+function syncBottomTwsControls(){
+  updateDayTwsUi(currentDay);
+  const rd=getActiveRaceRd();
+  if(rd) updateRaceTwsUi(rd);
+  else {
+    const rs=document.getElementById('raceTwsStateBottom'); if(rs) rs.textContent='Select race to edit override';
+    const ri=document.getElementById('raceTwsInputBottom'); if(ri && document.activeElement!==ri) ri.value='';
+  }
+}
+
 function updatePolarStatusLabel(){
   const el=document.getElementById('polarStatusLabel');
   if(!el) return;
@@ -2850,52 +2914,6 @@ function renderRacePanel(panelEl, rd){
       })():''}
     </div>
 
-    <div class="nc" style="margin-bottom:10px;padding:10px 12px">
-      <div class="nt">POLAR INPUT — TRUE WIND SPEED</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px">
-        <span style="font-size:10px;color:var(--muted)">Race override (kt)</span>
-        <input id="${raceDomId(rd,'twsInput')}" type="number" min="1" step="0.1" placeholder="inherit day" style="width:88px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif">
-        <button class="export-btn" style="padding:6px 10px" onclick="saveRaceTwsOverride(${rd._dayIdx},${raceNum})">SAVE RACE TWS</button>
-        <button class="export-btn" style="padding:6px 10px" onclick="clearRaceTwsOverride(${rd._dayIdx},${raceNum})">CLEAR RACE</button>
-        <span id="${raceDomId(rd,'twsState')}" style="font-size:10px;color:var(--muted2)"></span>
-      </div>
-      <div style="font-size:9px;color:var(--muted);margin-top:6px">If no manual TWS is entered, the report still loads and start-line optimisation still works, but this race is excluded from polar updates.</div>
-    </div>
-
-    <!-- Reach Mark Inference info box -->
-    ${(()=>{
-      const inf = rd ? rd.rmInference : (rm && rm.inference);
-      if(!inf) return '';
-      const confCol = inf.confidence==='HIGH'?'var(--green)':inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
-      const ocsList = inf.ocsBoats&&inf.ocsBoats.length
-        ? inf.ocsBoats.map(s=>'<span style="color:var(--red);font-family:Orbitron,monospace;font-size:10px">'+s+'</span>').join(' ')
-        : '<span style="color:var(--muted2)">none detected</span>';
-      return '<div class="nc" style="margin-bottom:10px">'
-        +'<div class="nt">⬡ REACH MARK INFERENCE</div>'
-        +'<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">SOURCE BOAT</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+(COL[inf.candidateSail]||'#aaa')+'">#'+inf.candidateSail+'</span>'
-            +'<span style="font-size:9px;color:var(--muted);margin-left:4px">'+(TEAM_NAMES[inf.candidateSail]||'')+'</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">CONFIDENCE</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+confCol+'">'+inf.confidence+'</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">FLEET VALIDATION</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:var(--cyan)">'+inf.passCount+' boats</span>'
-            +'<span style="font-size:9px;color:var(--muted);margin-left:4px">within '+RM_CFG.DIST_ACCEPT_M+'m</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">OCS BOATS</div>'
-            +'<div>'+ocsList+'</div>'
-          +'</div>'
-        +'</div>'
-        +'<div style="font-size:9px;color:var(--muted);margin-top:6px;font-style:italic">'+inf.reason+'</div>'
-        +'</div>';
-    })()}
-
     <!-- Start maps — PAGE 1 end -->
     <div class="sh">START LINE — at gun &amp; T+50</div>
     <div class="map2">
@@ -3006,6 +3024,39 @@ function renderRacePanel(panelEl, rd){
           <canvas id="${cWindId}" style="display:block;margin:0 auto"></canvas>
         </div>
       </div>
+
+      ${(()=>{
+        const inf = rd ? rd.rmInference : (rm && rm.inference);
+        if(!inf) return '';
+        const confCol = inf.confidence==='HIGH'?'var(--green)':inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
+        const ocsList = inf.ocsBoats&&inf.ocsBoats.length
+          ? inf.ocsBoats.map(s=>'<span style="color:var(--red);font-family:Orbitron,monospace;font-size:10px">'+s+'</span>').join(' ')
+          : '<span style="color:var(--muted2)">none detected</span>';
+        return '<div class="nc" style="margin-bottom:10px">'
+          +'<div class="nt">⬡ REACH MARK INFERENCE</div>'
+          +'<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">SOURCE BOAT</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+(COL[inf.candidateSail]||'#aaa')+'">#'+inf.candidateSail+'</span>'
+              +'<span style="font-size:9px;color:var(--muted);margin-left:4px">'+(TEAM_NAMES[inf.candidateSail]||'')+'</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">CONFIDENCE</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+confCol+'">'+inf.confidence+'</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">FLEET VALIDATION</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:var(--cyan)">'+inf.passCount+' boats</span>'
+              +'<span style="font-size:9px;color:var(--muted);margin-left:4px">within '+RM_CFG.DIST_ACCEPT_M+'m</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">OCS BOATS</div>'
+              +'<div>'+ocsList+'</div>'
+            +'</div>'
+          +'</div>'
+          +'<div style="font-size:9px;color:var(--muted);margin-top:6px;font-style:italic">'+inf.reason+'</div>'
+          +'</div>';
+      })()}
     </div>
 
 
@@ -4484,19 +4535,6 @@ function buildUI(){
     rtRow.className = 'race-tabs';
     rtRow.id = `raceTabs${di}`;
 
-    const dayTwsBar = document.createElement('div');
-    dayTwsBar.className = 'nc';
-    dayTwsBar.style.cssText='margin:0 0 10px 0;padding:10px 12px';
-    dayTwsBar.innerHTML = `<div class="nt">POLAR INPUT — DAY TRUE WIND SPEED</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px">
-        <span style="font-size:10px;color:var(--muted)">Day override (kt)</span>
-        <input id="dayTwsInput${di}" type="number" min="1" step="0.1" placeholder="optional" style="width:88px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif">
-        <button class="export-btn" style="padding:6px 10px" onclick="saveDayTwsOverride(${di})">SAVE DAY TWS</button>
-        <button class="export-btn" style="padding:6px 10px" onclick="clearDayTwsOverride(${di})">CLEAR DAY</button>
-        <span id="dayTwsState${di}" style="font-size:10px;color:var(--muted2)"></span>
-      </div>
-      <div style="font-size:9px;color:var(--muted);margin-top:6px">Day TWS applies to all races on this day unless a race-level override is entered.</div>`;
-
     // Race content
     const rcContent = document.createElement('div');
     rcContent.id = `raceContent${di}`;
@@ -4508,7 +4546,6 @@ function buildUI(){
       <div class="load-sub">Detecting race starts</div>
     </div>`;
 
-    dp.appendChild(dayTwsBar);
     dp.appendChild(rtRow);
     dp.appendChild(rcContent);
     dayPanelsEl.appendChild(dp);
@@ -4556,6 +4593,7 @@ function switchDay(di){ currentDay=di;
   // Trigger first-race load for this day if not yet loaded
   const event = EVENTS[di];
   updateDayTwsUi(di);
+  syncBottomTwsControls();
   if(event && event._guns && !event._firstRaceLoaded){
     event._firstRaceLoaded = true;
     const guns = event._guns;
@@ -4638,6 +4676,7 @@ let _raceQueue = Promise.resolve();
 
 function selectRace(event, di, raceNum, guns, ri){
   event._dayIdx = di;
+  event._activeRaceNum = raceNum;
 
   // Update tab active state immediately (before any async work)
   document.querySelectorAll(`#raceTabs${di} .race-tab`).forEach(t=>t.classList.remove('active'));
@@ -4653,7 +4692,8 @@ function selectRace(event, di, raceNum, guns, ri){
     document.querySelectorAll(`#raceContent${di} > div`).forEach(p=>p.style.display='none');
     existing.style.display='block';
     const rd=(event._races||[]).find(r=>r && r.raceNum===raceNum && (r._dayIdx===di || event._dayIdx===di));
-    if(rd){ requestAnimationFrame(()=>{ try{ const saved=saveGlobals(); setGlobals(rd); drawWindR(rd); drawCourseR(rd); if(rd.GUND?.length && rd.RC && rd.PIN) drawGunR(rd); if(rd.T50?.length && rd.RC && rd.PIN) drawT50R(rd); if(rd.RC && rd.PIN) initStartReplayR(rd); restoreGlobals(saved);}catch(e){ console.warn('revisit redraw failed', raceNum, e); } }); }
+    if(rd){ requestAnimationFrame(()=>{ try{ const saved=saveGlobals(); setGlobals(rd); drawWindR(rd); drawCourseR(rd); if(rd.GUND?.length && rd.RC && rd.PIN) drawGunR(rd); if(rd.T50?.length && rd.RC && rd.PIN) drawT50R(rd); if(rd.RC && rd.PIN) initStartReplayR(rd); restoreGlobals(saved);}catch(e){ console.warn('revisit redraw failed', raceNum, e); } }); updateRaceTwsUi(rd); }
+    syncBottomTwsControls();
     return;
   }
 
@@ -4685,6 +4725,7 @@ function selectRace(event, di, raceNum, guns, ri){
     panel.innerHTML = '';
     try {
       renderRacePanel(panel, rd);
+      syncBottomTwsControls();
     } catch(e){
       panel.innerHTML = `<div class="err">ERROR RENDERING RACE ${raceNum}: ${e.message}<br><pre style="font-size:9px;white-space:pre-wrap">${e.stack}</pre></div>`;
       console.error('renderRacePanel error R'+raceNum, e);
@@ -4902,6 +4943,7 @@ let currentDay = 0;
 
 async function init(){
   buildUI();
+  syncBottomTwsControls();
   
   // Load events serially — detectGuns is fast but we want buildRaceTabs (which
   // triggers selectRace for day 0) to complete before moving to the next day.

@@ -235,8 +235,8 @@ tr:hover td{background:var(--bg3)}
   .race-tab{padding:8px 10px;font-size:9px}
 
   .race-panel{padding:12px 10px}
-  .strip{display:flex;flex-wrap:nowrap;gap:8px;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-  .sc{flex:0 0 150px;min-width:150px;padding:8px 10px}
+  .strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .sc{min-width:0;width:100%;padding:8px 10px}
   .sv{font-size:14px}
   .sl{font-size:10px}
 
@@ -251,21 +251,21 @@ tr:hover td{background:var(--bg3)}
   th,td{padding:6px 8px}
 
   .replayStartGrid{grid-template-columns:1fr}
-  .replayPortraitCard{max-width:100%;justify-self:stretch}
-  .replayCanvasPortrait{max-width:100%}
+  .replayPortraitCard{max-width:none;width:100%;justify-self:stretch}
+  .replayCanvasPortrait{max-width:none;width:100%}
   .replayControls{justify-content:flex-start;width:100%}
   .replayControls input[type="range"]{width:100% !important;min-width:0}
 
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--muted2);border-radius:6px}
   .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse;width:max-content}
 
+  .map2{grid-template-columns:1fr;gap:10px}
   .course-and-right{display:flex !important;flex-direction:column;gap:8px !important}
   .course-card{order:2}
   .official-card{order:1}
   .wind-card{order:3}
 
 
-  .race-panel{padding:12px 10px}
   .race-panel > *,
   .race-panel .mc,
   .race-panel .nc,
@@ -274,6 +274,11 @@ tr:hover td{background:var(--bg3)}
   .map2,
   .replayStartGrid,
   .course-and-right{width:100%;max-width:100%}
+
+  .map2 > .mc,
+  .replayStartGrid > .mc,
+  .course-and-right > div,
+  .course-and-right .mc{min-width:0;max-width:none;justify-self:stretch}
 
   .bottom-actions{justify-content:stretch;align-items:stretch}
   .bottom-controls{display:grid;grid-template-columns:1fr;width:100%}
@@ -286,7 +291,7 @@ tr:hover td{background:var(--bg3)}
 }
 
 @media(max-width:560px){
-  .strip{display:flex;flex-wrap:nowrap;overflow-x:auto}
+  .strip{grid-template-columns:1fr}
   .replayControls{justify-content:flex-start;font-size:9px}
   #cWindDay{height:180px}
   .bottom-actions{padding:10px;flex-direction:column}

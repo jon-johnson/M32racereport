@@ -84,8 +84,9 @@ a{color:var(--cyan);text-decoration:none}
 
 .replayStartGrid{display:grid;grid-template-columns:minmax(360px,460px) minmax(0,1fr);gap:12px;align-items:start;margin-bottom:8px}
 .replayStartGrid>.mc{min-width:0}
+.replayStartGrid>*{min-width:0}
 .replayPortraitCard{max-width:460px;width:100%;justify-self:start}
-.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto}
+.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto;touch-action:auto}
 .replayControls{display:flex;align-items:center;gap:8px;font-size:8px;flex-wrap:wrap;justify-content:flex-end}
 .replaySpeedGroup{display:flex;align-items:center;gap:4px}
 .replaySpeedBtn{background:#0d1624;border:1px solid #2e4965;color:#9cc5ff;border-radius:6px;padding:3px 7px;font:700 9px Orbitron,sans-serif;cursor:pointer}
@@ -97,6 +98,7 @@ canvas{display:block;width:100%}
 
 /* ── TABLES ── */
 table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}
+.start-table,.reach-table,.official-finish-table{font-size:12px}
 th{font-family:Orbitron,monospace;font-size:8px;font-weight:700;color:var(--muted);letter-spacing:1px;
   padding:6px 8px;border-bottom:1px solid var(--muted2);text-align:left;background:var(--bg3)}
 td{padding:5px 8px;border-bottom:1px solid var(--bg3)}
@@ -201,11 +203,104 @@ tr:hover td{background:var(--bg3)}
 /* ── WIND CANVAS ── */
 #cWindDay{display:block;width:100%;height:120px}
 
+.bottom-actions{display:flex;gap:12px;justify-content:center;align-items:stretch;flex-wrap:wrap;padding:14px 20px 20px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
+.bottom-controls{display:grid;grid-template-columns:repeat(2,minmax(260px,320px));gap:12px;align-items:stretch;justify-content:center}
+.tws-box{background:var(--bg3);border:1px solid var(--muted2);border-radius:6px;padding:10px 12px;min-width:0;width:100%}
+.tws-title{font:700 9px Orbitron,monospace;color:var(--muted);letter-spacing:.8px;margin-bottom:6px}
+.tws-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tws-input{width:90px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif}
+.action-btn{font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;padding:6px 10px;border-radius:6px;cursor:pointer}
+.action-btn.alt{background:rgba(122,154,176,.08);border-color:rgba(122,154,176,.35);color:var(--muted)}
+.tws-state{font-size:10px;color:var(--muted2)}
+.course-card{grid-column:1;grid-row:1}
+.official-card{grid-column:2;grid-row:1}
+.wind-card{grid-column:3;grid-row:1}
+
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
   .map2{grid-template-columns:1fr}
   .race-tabs{gap:1px}
   .race-tab{padding:5px 8px;font-size:9px}
+}
+
+@media(max-width:900px){
+  body{font-size:13px}
+  .hdr{padding:10px 12px;flex-wrap:wrap;gap:10px}
+  .hdr-title{font-size:14px;letter-spacing:1px}
+  .hdr-sub{font-size:10px}
+  .hdr-r{margin-left:0;width:100%;justify-content:space-between;font-size:10px}
+  .day-tabs,.race-tabs{padding-left:10px;padding-right:10px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+  .day-tabs{flex-wrap:nowrap}
+  .race-tabs{flex-wrap:nowrap}
+  .day-tab,.race-tab{flex:0 0 auto}
+  .day-tab{padding:9px 12px;font-size:10px}
+  .race-tab{padding:8px 10px;font-size:9px}
+
+  .race-panel{padding:12px 10px}
+  .strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .sc{min-width:0;width:100%;padding:8px 10px}
+  .sv{font-size:14px}
+  .sl{font-size:10px}
+
+  .gb-row{gap:8px}
+  .gb{min-width:0;padding:10px}
+  .gb-val{font-size:14px}
+  .gb-lbl,.gb-sub{font-size:10px}
+
+  .sh{font-size:10px;margin:12px 0 8px}
+  .mh{font-size:9px;padding:8px 10px}
+
+  th,td{padding:6px 8px}
+
+  .replayStartGrid{grid-template-columns:1fr}
+  .replayPortraitCard{max-width:none;width:100%;justify-self:stretch}
+  .replayCanvasPortrait{max-width:none;width:100%}
+  .replayDataCol{min-width:0;width:100%;max-width:none;justify-self:stretch}
+  .replayControls{justify-content:flex-start;width:100%}
+  .replayControls input[type="range"]{width:100% !important;min-width:0}
+
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--muted2);border-radius:6px}
+  .table-scroll table{min-width:680px;margin-bottom:0;border-collapse:collapse;width:100%}
+
+  .map2{grid-template-columns:1fr;gap:10px}
+  .course-and-right{display:flex !important;flex-direction:column;gap:8px !important}
+  .course-card{order:2}
+  .official-card{order:1}
+  .wind-card{order:3}
+
+
+  .race-panel > *,
+  .race-panel .mc,
+  .race-panel .nc,
+  .race-panel .table-scroll,
+  .course-and-right > div,
+  .map2,
+  .replayStartGrid,
+  .course-and-right{width:100%;max-width:100%}
+
+  .map2 > .mc,
+  .replayStartGrid > .mc,
+  .course-and-right > div,
+  .course-and-right .mc{min-width:0;max-width:none;justify-self:stretch}
+
+  .bottom-actions{justify-content:center;align-items:stretch}
+  .bottom-controls{display:grid;grid-template-columns:1fr;width:100%}
+  .tws-box{min-width:0;width:100%}
+  .tws-row .action-btn{flex:1 1 auto;text-align:center}
+  .ds-avg-table{font-size:11px}
+  .ds-avg-table th{font-size:9px}
+  .ds-avg-table .boat-name{font-size:11px}
+  .ds-avg-table .boat-team{font-size:9px}
+}
+
+@media(max-width:560px){
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .replayControls{justify-content:flex-start;font-size:9px}
+  #cWindDay{height:180px}
+  .bottom-actions{padding:10px;flex-direction:column}
+  .bottom-actions .export-btn{width:100%;padding:10px 12px !important;font-size:11px !important}
+  .tws-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .tws-row .tws-input{grid-column:1 / -1;width:100%}
 }
 
 /* ── PRINT / PDF EXPORT ── */
@@ -352,24 +447,6 @@ tr:hover td{background:var(--bg3)}
     <div class="hdr-title" id="regattatitle">M32 · REGATTA REPORT</div>
     <div class="hdr-sub" id="regattasub">Vakaros RaceSense telemetry analysis</div>
   </div>
-  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="
-  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
-  background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
-  padding:6px 14px;border-radius:3px;cursor:pointer;margin-right:8px;
-  transition:all .15s"
-  onmouseover="this.style.background='rgba(0,204,255,.2)'"
-  onmouseout="this.style.background='rgba(0,204,255,.1)'">
-  ⬇ PDF — <span id="exportDayLabel"></span>
-</button>
-<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="
-  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
-  background:rgba(0,255,153,.08);border:1px solid rgba(0,255,153,.35);color:#00ff99;
-  padding:6px 14px;border-radius:3px;cursor:pointer;margin-right:8px;
-  transition:all .15s"
-  onmouseover="this.style.background='rgba(0,255,153,.16)'"
-  onmouseout="this.style.background='rgba(0,255,153,.08)'">
-  POLAR — <span id="polarStatusLabel">BASE</span>
-</button>
 <div class="hdr-r">
     <span id="hdrFleet">—</span>
     <span id="hdrDays" class="hi">—</span>
@@ -381,6 +458,58 @@ tr:hover td{background:var(--bg3)}
 
 <!-- Day panels (generated dynamically) -->
 <div id="dayPanels"></div>
+
+<!-- Bottom actions -->
+<div class="bottom-actions" id="bottomActions">
+  <div class="bottom-controls">
+    <div class="tws-box">
+      <div class="tws-title">DAY TRUE WIND SPEED</div>
+      <div class="tws-row">
+        <input id="dayTwsInputBottom" class="tws-input" type="number" min="1" step="0.1" placeholder="kt">
+        <button class="action-btn" onclick="saveCurrentDayTwsOverride()">SAVE DAY</button>
+        <button class="action-btn alt" onclick="clearCurrentDayTwsOverride()">CLEAR DAY</button>
+      </div>
+      <div id="dayTwsStateBottom" class="tws-state"></div>
+    </div>
+    <div class="tws-box">
+      <div class="tws-title">RACE TRUE WIND SPEED</div>
+      <div class="tws-row">
+        <input id="raceTwsInputBottom" class="tws-input" type="number" min="1" step="0.1" placeholder="kt">
+        <button class="action-btn" onclick="saveCurrentRaceTwsOverride()">SAVE RACE</button>
+        <button class="action-btn alt" onclick="clearCurrentRaceTwsOverride()">CLEAR RACE</button>
+      </div>
+      <div id="raceTwsStateBottom" class="tws-state"></div>
+    </div>
+  </div>
+  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="min-width:210px;
+  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
+  background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
+  padding:6px 14px;border-radius:3px;cursor:pointer;
+  transition:all .15s"
+  onmouseover="this.style.background='rgba(0,204,255,.2)'"
+  onmouseout="this.style.background='rgba(0,204,255,.1)'">
+  ⬇ PDF — <span id="exportDayLabel"></span>
+</button>
+<button class="export-btn" id="fixedBtn" onclick="exportFixedReport()" style="min-width:210px;
+  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
+  background:rgba(255,170,0,.10);border:1px solid rgba(255,170,0,.45);color:#ffb347;
+  padding:6px 14px;border-radius:3px;cursor:pointer;
+  transition:all .15s"
+  onmouseover="this.style.background='rgba(255,170,0,.2)'"
+  onmouseout="this.style.background='rgba(255,170,0,.1)'">
+  BUILD FIXED REPORT
+</button>
+<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="min-width:210px;
+  font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
+  background:rgba(0,255,153,.08);border:1px solid rgba(0,255,153,.35);color:#00ff99;
+  padding:6px 14px;border-radius:3px;cursor:pointer;
+  transition:all .15s"
+  onmouseover="this.style.background='rgba(0,255,153,.16)'"
+  onmouseout="this.style.background='rgba(0,255,153,.08)'">
+  POLAR — <span id="polarStatusLabel">BASE</span>
+</button>
+</div>
+
 
 <script>
 'use strict';
@@ -553,7 +682,7 @@ let OFFICIAL_RESULTS = OFFICIAL_RESULTS_BY_DAY[0] || {};
 // RC_SNS = RC boat(s), PIN_SN = pin end buoy
 const GATE_SNS = {
   WW: [13498, 15255],
-  LW: [14292, 14293],
+  LW: [15025, 15205],
   RC_SNS: [13201],
   PIN_SN: 14293,
 };
@@ -578,6 +707,8 @@ const POLAR_OBS_KEY = `${POLAR_STORE_PREFIX}_observations`;
 const POLAR_CANDIDATE_KEY = `${POLAR_STORE_PREFIX}_candidate`;
 const POLAR_ACTIVE_KEY = `${POLAR_STORE_PREFIX}_active`;
 const POLAR_TWS_OVERRIDE_KEY = `${POLAR_STORE_PREFIX}_tws_overrides`;
+const REACH_MARK_OVERRIDE_KEY = `${POLAR_STORE_PREFIX}_reach_mark_overrides`;
+const PRELOAD_ALL_RACES_ON_OPEN = true;
 function safeLocalGet(key){ try{return JSON.parse(localStorage.getItem(key)||'null');}catch(e){return null;} }
 function safeLocalSet(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ console.warn('localStorage set failed', key, e); } }
 function getActivePolarStore(){ return safeLocalGet(POLAR_ACTIVE_KEY); }
@@ -585,6 +716,25 @@ function getCandidatePolarStore(){ return safeLocalGet(POLAR_CANDIDATE_KEY); }
 function getPolarObsStore(){ return safeLocalGet(POLAR_OBS_KEY) || {className:'M32', version:1, observations:{}}; }
 function getPolarGrid(){ return (getActivePolarStore()?.polar) || M32_POLAR; }
 function getTwsOverrideStore(){ return safeLocalGet(POLAR_TWS_OVERRIDE_KEY) || {days:{}, races:{}}; }
+function getReachMarkOverrideStore(){ return safeLocalGet(REACH_MARK_OVERRIDE_KEY) || {races:{}}; }
+function reachOverrideKeyFromRd(rd){ return `${rd?.event?.id||'ev'}_d${rd?.event?._dayIdx ?? rd?._dayIdx ?? 0}_r${rd?.raceNum ?? 0}`; }
+function saveReachMarkOverride(rd, lat, lon){
+  if(!rd || !Number.isFinite(lat) || !Number.isFinite(lon)) return;
+  const store=getReachMarkOverrideStore();
+  const key=reachOverrideKeyFromRd(rd);
+  store.races[key]={lat:+lat.toFixed(7), lon:+lon.toFixed(7), updatedAt:Date.now()};
+  safeLocalSet(REACH_MARK_OVERRIDE_KEY, store);
+}
+function applyReachMarkOverride(rd){
+  if(!rd) return;
+  const store=getReachMarkOverrideStore();
+  const key=reachOverrideKeyFromRd(rd);
+  const ov=store.races?.[key];
+  if(!ov || !Number.isFinite(ov.lat) || !Number.isFinite(ov.lon)) return;
+  const t_s=50;
+  rd.rm={lat:ov.lat, lon:ov.lon, boat_lat:ov.lat, boat_lon:ov.lon, ts:rd.gunTs+50000, t_s, manual:true, fixed:true};
+  try{ recomputeL1(rd); }catch(e){ console.warn('applyReachMarkOverride recompute failed', e); }
+}
 function dayOverrideKeyFromEvent(event, di){ return `${event?.id||'ev'}_d${di ?? event?._dayIdx ?? 0}`; }
 function raceOverrideKeyFromRd(rd){ return `${rd?.event?.id||'ev'}_d${rd?.event?._dayIdx ?? rd?._dayIdx ?? 0}_r${rd?.raceNum ?? 0}`; }
 function getEffectiveTwsInfo(rd){
@@ -617,9 +767,9 @@ function updateRaceTwsUi(rd){
   if(!rd) return;
   const info=getEffectiveTwsInfo(rd);
   const id=raceDomId(rd,'twsState');
-  const el=document.getElementById(id);
-  if(el) el.textContent = info.tws!=null ? `Using ${info.tws.toFixed(1)} kt (${info.source} override)` : 'No manual TWS set · report still works, but polar updates are disabled';
-  const inp=document.getElementById(raceDomId(rd,'twsInput'));
+  const el=document.getElementById('raceTwsStateBottom') || document.getElementById(id);
+  if(el) el.textContent = info.tws!=null ? `Using ${info.tws.toFixed(1)} kt (${info.source} override)` : 'No race override · day/base values apply';
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput'));
   if(inp && document.activeElement!==inp){ inp.value = info.source==='race' && info.tws!=null ? info.tws : ''; }
 }
 function rerenderVisibleRace(rd){
@@ -634,14 +784,14 @@ function updateDayTwsUi(di){
   const store=getTwsOverrideStore();
   const dayKey=dayOverrideKeyFromEvent(event, di);
   const v=store.days?.[dayKey]?.tws;
-  const inp=document.getElementById(`dayTwsInput${di}`);
+  const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`);
   if(inp && document.activeElement!==inp){ inp.value = Number.isFinite(v) ? v : ''; }
-  const st=document.getElementById(`dayTwsState${di}`);
+  const st=document.getElementById('dayTwsStateBottom') || document.getElementById(`dayTwsState${di}`);
   if(st) st.textContent = Number.isFinite(v) ? `Day override active: ${(+v).toFixed(1)} kt` : 'No day override';
 }
 function saveDayTwsOverride(di){
   const event=EVENTS?.[di]; if(!event) return;
-  const inp=document.getElementById(`dayTwsInput${di}`);
+  const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`);
   const raw=inp ? inp.value.trim() : '';
   const store=getTwsOverrideStore();
   const dayKey=dayOverrideKeyFromEvent(event, di);
@@ -652,16 +802,17 @@ function saveDayTwsOverride(di){
   }
   safeLocalSet(POLAR_TWS_OVERRIDE_KEY, store);
   updateDayTwsUi(di);
+  syncBottomTwsControls();
   for(const rd of (event._races||[])){ if(rd) updateRaceTwsUi(rd); }
   refreshPolarDataForDay(event, di);
   const active=(event._races||[]).find(r=>r && document.getElementById(`racePanel${r._dayIdx}_${r.raceNum}`)?.offsetParent!==null);
   if(active) rerenderVisibleRace(active);
   updatePolarStatusLabel();
 }
-function clearDayTwsOverride(di){ const inp=document.getElementById(`dayTwsInput${di}`); if(inp) inp.value=''; saveDayTwsOverride(di); }
+function clearDayTwsOverride(di){ const inp=document.getElementById('dayTwsInputBottom') || document.getElementById(`dayTwsInput${di}`); if(inp) inp.value=''; saveDayTwsOverride(di); }
 function saveRaceTwsOverride(di, raceNum){
   const event=EVENTS?.[di]; const rd=(event?._races||[]).find(r=>r && r.raceNum===raceNum); if(!rd) return;
-  const inp=document.getElementById(raceDomId(rd,'twsInput'));
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput'));
   const raw=inp ? inp.value.trim() : '';
   const store=getTwsOverrideStore();
   const raceKey=raceOverrideKeyFromRd(rd);
@@ -678,9 +829,30 @@ function saveRaceTwsOverride(di, raceNum){
 }
 function clearRaceTwsOverride(di, raceNum){
   const event=EVENTS?.[di]; const rd=(event?._races||[]).find(r=>r && r.raceNum===raceNum); if(!rd) return;
-  const inp=document.getElementById(raceDomId(rd,'twsInput')); if(inp) inp.value='';
+  const inp=document.getElementById('raceTwsInputBottom') || document.getElementById(raceDomId(rd,'twsInput')); if(inp) inp.value='';
   saveRaceTwsOverride(di, raceNum);
 }
+
+function getActiveRaceRd(){
+  const event=EVENTS?.[currentDay]; if(!event) return null;
+  const raceNum=event._activeRaceNum;
+  if(Number.isFinite(raceNum)) return (event._races||[]).find(r=>r && r.raceNum===raceNum) || null;
+  return (event._races||[]).find(r=>r && document.getElementById(`racePanel${r._dayIdx}_${r.raceNum}`)?.offsetParent!==null) || null;
+}
+function saveCurrentDayTwsOverride(){ saveDayTwsOverride(currentDay); }
+function clearCurrentDayTwsOverride(){ clearDayTwsOverride(currentDay); }
+function saveCurrentRaceTwsOverride(){ const rd=getActiveRaceRd(); if(!rd){ alert('Load/select a race first'); return; } saveRaceTwsOverride(currentDay, rd.raceNum); }
+function clearCurrentRaceTwsOverride(){ const rd=getActiveRaceRd(); if(!rd){ alert('Load/select a race first'); return; } clearRaceTwsOverride(currentDay, rd.raceNum); }
+function syncBottomTwsControls(){
+  updateDayTwsUi(currentDay);
+  const rd=getActiveRaceRd();
+  if(rd) updateRaceTwsUi(rd);
+  else {
+    const rs=document.getElementById('raceTwsStateBottom'); if(rs) rs.textContent='Select race to edit override';
+    const ri=document.getElementById('raceTwsInputBottom'); if(ri && document.activeElement!==ri) ri.value='';
+  }
+}
+
 function updatePolarStatusLabel(){
   const el=document.getElementById('polarStatusLabel');
   if(!el) return;
@@ -2206,7 +2378,7 @@ function renderL1(stats,wf){
     const c=COL[s.sail],rk=i===0?'g':i===1?'s':i===2?'b':'',gap=i===0?'—':`+${fmt(s.dur-lT)}`;
     const dp=(s.dist/mD*100).toFixed(1),sp=(s.sog/mS*100).toFixed(1);
     const p=PTS[s.sail],dq=p>=1500?'dqg':p>=500?'dqp':'dqs',tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="color:${c}">${s.sail}</span></div></td><td><div class="td"><span class="mn">${fmt(s.dur)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)} m</div></div></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td><td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td><td><div class="td">${s.heelSd!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heelSd/mHSd*100).toFixed(1)}%;background:${c}77"></div></div><div class="bv" style="color:${c}88">${(s.heelSd/mHSd*100).toFixed(0)}%</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s.sail}</span></div></td><td><div class="td"><span class="mn">${fmt(s.dur)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)} m</div></div></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td><td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td><td><div class="td">${s.heelSd!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heelSd/mHSd*100).toFixed(1)}%;background:${c}77"></div></div><div class="bv" style="color:${c}88">${(s.heelSd/mHSd*100).toFixed(0)}%</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>`;
     tb.appendChild(tr);
   });
 
@@ -2215,7 +2387,7 @@ function renderL1(stats,wf){
 function renderFin(fO,l1O){
   const tb=document.getElementById('finBody'),wT=(FIN_TS[fO[0]]-(window.GUN||0))/1000;
   fO.forEach((s,i)=>{const c=COL[s],rk=i===0?'g':i===1?'s':i===2?'b':'',ft=(FIN_TS[s]-(window.GUN||0))/1000,gap=i===0?'—':`+${fmt(ft-wT)}`,l1p=l1O.indexOf(s)+1,p=PTS[s],dq=p>=1500?'dqg':p>=500?'dqp':'dqs',tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:16px;font-weight:700">P${l1p}</div></td><td><div class="td"><span class="dq ${dq}">${p>=1500?'GOOD':p>=500?'PART':'SPARSE'} · ${p} pts</span></div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:16px;font-weight:700">P${l1p}</div></td><td><div class="td"><span class="dq ${dq}">${p>=1500?'GOOD':p>=500?'PART':'SPARSE'} · ${p} pts</span></div></td>`;
     tb.appendChild(tr);
   });
 }
@@ -2225,7 +2397,7 @@ function renderPL(l1O,fO){
   fO.forEach(s=>{const c=COL[s],l1p=l1O.indexOf(s)+1,fp=fO.indexOf(s)+1,d=l1p-fp,cc=d>0?'cup':d<0?'cdn':'ceq',ct=d>0?`▲${d}`:d<0?`▼${Math.abs(d)}`:'—';
     const l1t=((rmTS[s]||MARK1_TS_FALLBACK[s]||(window.GUN||0)+200000)-(window.GUN||0))/1000,ft=(FIN_TS[s]-(window.GUN||0))/1000;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${l1p}</div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${fp}</div></td><td><div class="td"><span class="chip ${cc}">${ct}</span></div></td><td><div class="td"><span class="mn">${fmt(l1t)}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">+${fmt(ft-wT)}</span></div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${l1p}</div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${fp}</div></td><td><div class="td"><span class="chip ${cc}">${ct}</span></div></td><td><div class="td"><span class="mn">${fmt(l1t)}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">+${fmt(ft-wT)}</span></div></td>`;
     tb.appendChild(tr);
   });
 }
@@ -2752,86 +2924,21 @@ function renderRacePanel(panelEl, rd){
   panelEl.innerHTML = `
     <!-- Strip -->
     <div class="strip">
-      <div class="sc"><div class="sv">${estStr} EST</div><div class="sl">GUN TIME</div></div>
-      <div class="sc"><div class="sv">${BOATS.length}</div><div class="sl">BOATS</div></div>
-      <div class="sc"><div class="sv" id="${saxId}">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div><div class="sl">COURSE AXIS</div></div>
-      <div class="sc"><div class="sv">${rm&&MID?Math.round(hav(MID.lat,MID.lon,rm.lat,rm.lon))+'m':caLen+'m'}</div><div class="sl">LEG LENGTH</div></div>
-      <div class="sc"><div class="sv">${slBrg!=null?slBrg.toFixed(1)+'°':'—'}</div><div class="sl">START LINE</div></div>
-      <div class="sc"><div class="sv">${slLen}m</div><div class="sl">LINE LENGTH</div></div>
       ${WF!=null?`<div class="sc"><div class="sv">${WF.toFixed(0)}°</div><div class="sl">WIND (INFERRED)</div></div>`:''}
-    </div>
-
-    <!-- Geometry bar -->
-    <div class="gb-row">
-      <div class="gb"><div class="gb-lbl">Course axis (LW→WW)</div>
-        <div class="gb-val">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div>
-        <div class="gb-sub">${caLen}m WW leg</div></div>
-      <div class="gb"><div class="gb-lbl">Start line (RC→Pin)</div>
-        <div class="gb-val">${slBrg!=null?slBrg.toFixed(1)+'°':'—'}</div>
-        <div class="gb-sub">${slLen}m</div></div>
       ${rm&&MID?(()=>{
-        // Bearing from start line midpoint to reach mark — true reach leg direction
         const rlB=brg(MID.lat,MID.lon,rm.lat,rm.lon);
         const rlDist=Math.round(hav(MID.lat,MID.lon,rm.lat,rm.lon));
         const twa=WF!=null?Math.abs(((rlB-WF+180+360)%360)-180):null;
-        const inf=rm.inference;
-        const confCol=inf&&inf.confidence==='HIGH'?'var(--green)':inf&&inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
-        return '<div class="gb"><div class="gb-lbl">Reach leg (midline→mark)</div>'
-          +'<div class="gb-val">'+rlDist+'m'+(twa!=null?' · '+twa.toFixed(0)+'° TWA':'')+'</div>'
-          +'<div class="gb-sub">'+rlB.toFixed(1)+'° bearing · T+'+rm.t_s.toFixed(0)+'s'
-          +(inf?' · <span style="color:'+confCol+';font-size:8px">'+inf.confidence+'</span>':'')
-          +'</div></div>';
+        return `<div class="sc"><div class="sv">${rlDist}m${twa!=null?' · '+twa.toFixed(0)+'°':''}</div><div class="sl">REACH LEG</div></div>`;
       })():''}
+      <div class="sc"><div class="sv">${slBrg!=null?slBrg.toFixed(1)+'°':'—'} · ${slLen}m</div><div class="sl">START LINE</div></div>
+      <div class="sc"><div class="sv" id="${saxId}">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div><div class="sl">COURSE AXIS</div></div>
+      <div class="sc"><div class="sv">${estStr} EST</div><div class="sl">GUN TIME</div></div>
+      <div class="sc"><div class="sv">${BOATS.length}</div><div class="sl">BOATS</div></div>
     </div>
-
-    <div class="nc" style="margin-bottom:10px;padding:10px 12px">
-      <div class="nt">POLAR INPUT — TRUE WIND SPEED</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px">
-        <span style="font-size:10px;color:var(--muted)">Race override (kt)</span>
-        <input id="${raceDomId(rd,'twsInput')}" type="number" min="1" step="0.1" placeholder="inherit day" style="width:88px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif">
-        <button class="export-btn" style="padding:6px 10px" onclick="saveRaceTwsOverride(${rd._dayIdx},${raceNum})">SAVE RACE TWS</button>
-        <button class="export-btn" style="padding:6px 10px" onclick="clearRaceTwsOverride(${rd._dayIdx},${raceNum})">CLEAR RACE</button>
-        <span id="${raceDomId(rd,'twsState')}" style="font-size:10px;color:var(--muted2)"></span>
-      </div>
-      <div style="font-size:9px;color:var(--muted);margin-top:6px">If no manual TWS is entered, the report still loads and start-line optimisation still works, but this race is excluded from polar updates.</div>
-    </div>
-
-    <!-- Reach Mark Inference info box -->
-    ${(()=>{
-      const inf = rd ? rd.rmInference : (rm && rm.inference);
-      if(!inf) return '';
-      const confCol = inf.confidence==='HIGH'?'var(--green)':inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
-      const ocsList = inf.ocsBoats&&inf.ocsBoats.length
-        ? inf.ocsBoats.map(s=>'<span style="color:var(--red);font-family:Orbitron,monospace;font-size:10px">'+s+'</span>').join(' ')
-        : '<span style="color:var(--muted2)">none detected</span>';
-      return '<div class="nc" style="margin-bottom:10px">'
-        +'<div class="nt">⬡ REACH MARK INFERENCE</div>'
-        +'<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">SOURCE BOAT</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+(COL[inf.candidateSail]||'#aaa')+'">#'+inf.candidateSail+'</span>'
-            +'<span style="font-size:9px;color:var(--muted);margin-left:4px">'+(TEAM_NAMES[inf.candidateSail]||'')+'</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">CONFIDENCE</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+confCol+'">'+inf.confidence+'</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">FLEET VALIDATION</div>'
-            +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:var(--cyan)">'+inf.passCount+' boats</span>'
-            +'<span style="font-size:9px;color:var(--muted);margin-left:4px">within '+RM_CFG.DIST_ACCEPT_M+'m</span>'
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">OCS BOATS</div>'
-            +'<div>'+ocsList+'</div>'
-          +'</div>'
-        +'</div>'
-        +'<div style="font-size:9px;color:var(--muted);margin-top:6px;font-style:italic">'+inf.reason+'</div>'
-        +'</div>';
-    })()}
 
     <!-- Start maps — PAGE 1 end -->
-    <div class="sh">START LINE — at gun &amp; T+50</div>
+    <div class="sh">MAP VIEWS</div>
     <div class="map2">
       <div class="mc"><div class="mh">AT GUN · RC &amp; Pin ends · boat positions</div><canvas id="${cGunId}"></canvas></div>
       <div class="mc"><div class="mh">T + 0:50 — tracks + positions · avg speed · ranked</div><canvas id="${cT50Id}"></canvas></div>
@@ -2854,49 +2961,38 @@ function renderRacePanel(panelEl, rd){
         <canvas id="${raceDomId(rd,'cReplay')}" class="replayCanvasPortrait"></canvas>
       </div>
 
-      <div>
+      <div class="replayDataCol">
         <!-- Start table — aligned under T+50 -->
         <div class="sh">START REPORT — boat-by-boat</div>
-        <table class="start-table" id="${startTableId}"><thead><tr>
+        <div class="table-scroll"><table class="start-table" id="${startTableId}"><thead><tr>
       <th data-col="rank" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','rank','asc',true)">#</th>
       <th>Boat</th>
       <th data-col="dtl" data-dir="desc" style="cursor:pointer" title="Click to sort. DTL is signed: positive = pre-start side (safe), negative = course side (OCS side)" onclick="sortTable('${startTableId}','dtl','desc',true)">DTL@Gun ⇅<br><span style="font-weight:400;font-size:7px">+ safe  − course</span></th>
-      <th data-col="linepct" data-dir="desc" style="cursor:pointer" title="0% = pin, 100% = boat" onclick="sortTable('${startTableId}','linepct','desc',true)">Line % ⇅<br><span style="font-weight:400;font-size:7px">0 pin · 100 boat</span></th>
       <th data-col="spd" data-dir="desc" style="cursor:pointer" onclick="sortTable('${startTableId}','spd','desc',true)">Speed@Gun ⇅</th>
       <th data-col="cross" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','cross','asc',true)">Line cross ⇅<br><span style="font-weight:400;font-size:7px">sec after gun</span></th>
+      <th data-col="linepct" data-dir="desc" style="cursor:pointer" title="0% = pin, 100% = boat" onclick="sortTable('${startTableId}','linepct','desc',true)">Line % ⇅<br><span style="font-weight:400;font-size:7px">0 pin · 100 boat</span></th>
       <th data-col="t95" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','t95','asc',true)">T→95% ⇅<br><span style="font-weight:400;font-size:7px">secs to reach speed</span></th>
-    </tr></thead><tbody id="${startBodyId}"></tbody></table>
+    </tr></thead><tbody id="${startBodyId}"></tbody></table></div>
 
     <!-- PAGE 2 — Leg 1 table first -->
     <div class="sh page2-start">LEG 1 — REACH ORDER at T+50s · ranked by dist from pin</div>
-    <table id="${l1TableId}"><thead><tr>
+    <div class="table-scroll"><table class="reach-table" id="${l1TableId}"><thead><tr>
       <th data-col="rank" style="cursor:pointer" onclick="sortTable('${l1TableId}','rank','asc',false)">#</th>
       <th>Boat</th>
-      <th data-col="dist" style="cursor:pointer" onclick="sortTable('${l1TableId}','dist','desc',false)">Dist from Pin ⇅</th>
-      <th data-col="gap" style="cursor:pointer" onclick="sortTable('${l1TableId}','gap','asc',false)">Gap@T+50 ⇅</th>
       <th data-col="sailed" style="cursor:pointer" onclick="sortTable('${l1TableId}','sailed','desc',false)">Dist sailed ⇅</th>
       <th data-col="sog" style="cursor:pointer" onclick="sortTable('${l1TableId}','sog','desc',false)">Avg SOG ⇅</th>
       <th data-col="heel" style="cursor:pointer" onclick="sortTable('${l1TableId}','heel','desc',false)">Avg heel ⇅</th>
       <th data-col="heelsd" style="cursor:pointer" onclick="sortTable('${l1TableId}','heelsd','asc',false)">Heel σ ⇅<br><span style="font-weight:400;font-size:8px">100%=least stable</span></th>
-    </tr></thead><tbody id="${l1BodyId}"></tbody></table>
-
-    <!-- Course (left) + Official results & Wind (right) -->
-    <div class="sh">COURSE OVERVIEW</div>
-    <div class="course-and-right" style="display:grid;grid-template-columns:440px 1fr;gap:16px;margin-bottom:12px;align-items:start">
-
-      <!-- Left: course map -->
-      <div class="mc" style="flex-shrink:0">
-        <div class="mh">FULL RACE TRACKS · GATES · REACH MARK · COURSE AXIS &nbsp;<span style="color:var(--orange);font-size:8px">✦ CLICK TO PLACE REACH MARK</span></div>
-        <canvas id="${cCourseId}"></canvas>
+    </tr></thead><tbody id="${l1BodyId}"></tbody></table></div>
       </div>
+    </div>
 
-      <!-- Right: official results + wind stacked -->
-      <div style="display:flex;flex-direction:column;gap:8px">
-
+    <!-- Course + Official results + Wind -->
+    <div class="course-and-right" style="display:grid;grid-template-columns:minmax(360px,460px) minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;align-items:start">
+      <div class="official-card">
         ${(()=>{
           const or=(OFFICIAL_RESULTS_BY_DAY[rd.event._dayIdx||0]||OFFICIAL_RESULTS_BY_DAY[0])[raceNum];
           if(!or||!Object.keys(or).length) return '';
-          // Build reach position lookup from l1Order
           const reachPos = {};
           (l1Order||[]).forEach((sail,i)=>{ reachPos[sail]=i+1; });
           const sorted=Object.entries(or).filter(([,p])=>typeof p==='number'&&p<90).sort((a,b)=>a[1]-b[1]);
@@ -2908,40 +3004,81 @@ function renderRacePanel(panelEl, rd){
               : delta<0 ? '<span style="color:#f87171;font-weight:700">&#9660;'+Math.abs(delta)+'</span>'
               : '<span style="color:var(--muted)">&mdash;</span>';
             const rpStr = rp!=null
-              ? '<span style="font-family:Orbitron,monospace;font-size:10px;color:var(--cyan)">'+rp+'</span>'
+              ? '<span style="font-family:Orbitron,monospace;font-size:16.5px;color:var(--cyan)">'+rp+'</span>'
               : '<span style="color:var(--muted)">&mdash;</span>';
             const c = COL[sail]||'#888';
             const tn = TEAM_NAMES[sail]||'';
             return '<tr>'
-              +'<td style="text-align:center;font-family:Orbitron,monospace;font-size:11px;font-weight:700;color:var(--muted);padding:2px 4px;white-space:nowrap">'+finP+'</td>'
+              +'<td style="text-align:center;font-family:Orbitron,monospace;font-size:16.5px;font-weight:700;color:var(--muted);padding:2px 4px;white-space:nowrap">'+finP+'</td>'
               +'<td style="padding:2px 4px;white-space:nowrap">'+rpStr+'</td>'
               +'<td style="padding:2px 4px;white-space:nowrap;text-align:center">'+deltaStr+'</td>'
               +'<td style="padding:2px 6px">'
                 +'<span style="width:7px;height:7px;border-radius:50%;background:'+c+';display:inline-block;vertical-align:middle;margin-right:4px"></span>'
-                +'<span style="font-family:Orbitron,monospace;font-size:11px;font-weight:700;color:'+c+'">'+sail+'</span>'
-                +'<span style="font-size:9px;color:var(--muted);margin-left:3px">'+tn+'</span>'
+                +'<span style="font-family:Orbitron,monospace;font-size:19.5px;font-weight:700;color:'+c+'">'+sail+'</span>'
+                +'<span style="font-size:13.5px;color:var(--muted);margin-left:3px">'+tn+'</span>'
               +'</td>'
               +'</tr>';
           }).join('');
           return '<div class="sh" style="margin-top:0">OFFICIAL FINISH</div>'
-            +'<table style="width:100%;margin-bottom:6px">'
+            +'<table class="official-finish-table" style="width:100%;margin-bottom:6px">'
             +'<thead><tr>'
-            +'<th style="width:24px;padding:2px 4px">Fin</th>'
-            +'<th style="width:32px;padding:2px 4px">Reach</th>'
-            +'<th style="width:36px;padding:2px 4px">Δ</th>'
-            +'<th style="padding:2px 6px">Boat</th>'
+            +'<th style="width:24px;padding:2px 4px;font-size:12px">Fin</th>'
+            +'<th style="width:32px;padding:2px 4px;font-size:12px">Reach</th>'
+            +'<th style="width:36px;padding:2px 4px;font-size:12px">Δ</th>'
+            +'<th style="padding:2px 6px;font-size:12px">Boat</th>'
             +'</tr></thead>'
             +'<tbody>'+rows+'</tbody>'
             +'</table>';
         })()}
+      </div>
 
-        <!-- Wind — full legend needs sufficient height -->
-        <div class="sh" style="font-size:7px;opacity:0.7;margin-top:2px">WIND INFERENCE</div>
+      <div class="course-card">
+        <div class="sh" style="margin-top:0">COURSE OVERVIEW</div>
+        <div class="mc" style="flex-shrink:0">
+          <div class="mh">FULL RACE TRACKS · GATES · REACH MARK · COURSE AXIS &nbsp;<span style="color:var(--orange);font-size:8px">✦ CLICK TO PLACE REACH MARK</span></div>
+          <canvas id="${cCourseId}"></canvas>
+        </div>
+      </div>
+
+      <div class="wind-card">
+        <div class="sh" style="margin-top:0">WIND INFERENCE</div>
         <div class="mc">
           <div class="mh" style="font-size:7px">PORT/STBD TACK &amp; GYBE SEGMENTS · INFERRED DIRECTION</div>
           <canvas id="${cWindId}" style="display:block;margin:0 auto"></canvas>
         </div>
 
+      ${(()=>{
+        const inf = rd ? rd.rmInference : (rm && rm.inference);
+        if(!inf) return '';
+        const confCol = inf.confidence==='HIGH'?'var(--green)':inf.confidence==='MEDIUM'?'var(--yellow)':'var(--red)';
+        const ocsList = inf.ocsBoats&&inf.ocsBoats.length
+          ? inf.ocsBoats.map(s=>'<span style="color:var(--red);font-family:Orbitron,monospace;font-size:10px">'+s+'</span>').join(' ')
+          : '<span style="color:var(--muted2)">none detected</span>';
+        return '<div class="nc" style="margin-bottom:10px">'
+          +'<div class="nt">⬡ REACH MARK INFERENCE</div>'
+          +'<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">SOURCE BOAT</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+(COL[inf.candidateSail]||'#aaa')+'">#'+inf.candidateSail+'</span>'
+              +'<span style="font-size:9px;color:var(--muted);margin-left:4px">'+(TEAM_NAMES[inf.candidateSail]||'')+'</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">CONFIDENCE</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+confCol+'">'+inf.confidence+'</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">FLEET VALIDATION</div>'
+              +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:var(--cyan)">'+inf.passCount+' boats</span>'
+              +'<span style="font-size:9px;color:var(--muted);margin-left:4px">within '+RM_CFG.DIST_ACCEPT_M+'m</span>'
+            +'</div>'
+            +'<div>'
+              +'<div style="font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:2px">OCS BOATS</div>'
+              +'<div>'+ocsList+'</div>'
+            +'</div>'
+          +'</div>'
+          +'<div style="font-size:9px;color:var(--muted);margin-top:6px;font-style:italic">'+inf.reason+'</div>'
+          +'</div>';
+      })()}
       </div>
     </div>
 
@@ -3108,6 +3245,14 @@ function visibleGunBoats(rd){
   return (rd?.GUND || []).filter(d=>isVisibleAtGunReplay(rd, d.sail));
 }
 
+function gunMapBoatColor(rd, sail){
+  const i=(rd?.l1Order||[]).indexOf(sail);
+  if(i===0) return '#ffcc00';
+  if(i===1) return '#d1d5db';
+  if(i===2) return '#cd7f32';
+  return '#22c55e';
+}
+
 function drawGunR(rd){
   const {raceNum,RC,PIN,gunTs,ocsFromTelemetry} = rd;
   const GUND = visibleGunBoats(rd);
@@ -3263,7 +3408,7 @@ function drawGunR(rd){
   const rotDeg = rot * 180 / Math.PI;
   p2.forEach(d=>{
     const isOCS = ocsFromTelemetry ? ocsFromTelemetry.has(d.sail) : false;
-    const boatCol = reachRankColor(rd, d.sail);
+    const boatCol = gunMapBoatColor(rd, d.sail);
     const bx=tX(d.rx),by=tY(d.ry);
     // OCS: draw pulsing shaded circle behind boat
     if(isOCS){
@@ -3285,6 +3430,12 @@ function drawGunR(rd){
     ctx.lineTo(ex-Math.sin(hr+0.4)*6,ey+Math.cos(hr+0.4)*6);
     ctx.closePath();ctx.fill();ctx.restore();
     drawCat(ctx,bx,by,screenHdg,boatCol,d.sail,mpp,null);
+    ctx.save();
+    ctx.fillStyle=boatCol;
+    ctx.font='bold 8px Share Tech Mono';
+    ctx.textAlign='left';
+    ctx.fillText(`${d.sog.toFixed(1)} kts`, bx+14, by+3);
+    ctx.restore();
   });
   // Speed legend top-left
   ctx.save();p2.forEach((d,i)=>{
@@ -3414,7 +3565,7 @@ function drawStartReplayFrame(rd, relSec){
     ctx.strokeStyle=reachRankColor(rd, sail)+'aa'; ctx.lineWidth=1.3;
     ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(ex,ey); ctx.stroke();
     ctx.fillStyle=reachRankColor(rd, sail)+'aa'; ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(ex-Math.sin(hr-0.45)*5,ey+Math.cos(hr-0.45)*5); ctx.lineTo(ex-Math.sin(hr+0.45)*5,ey+Math.cos(hr+0.45)*5); ctx.closePath(); ctx.fill();
-    drawCat(ctx,bx,by,screenHdg,COL[sail]||'#888',sail,mpp,null);
+    drawCat(ctx,bx,by,screenHdg,gunMapBoatColor(rd,sail),sail,mpp,null);
     ctx.restore();
   }
   const boxW=78, boxH=22;
@@ -3466,6 +3617,8 @@ function initStartReplayR(rd){
   slider.oninput = ()=>{ stop(); st.rel=parseFloat(slider.value)||-30; render(); };
   playBtn.onclick = ()=>{ st.playing ? stop() : start(); };
   Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.onclick = ()=>setSpeed(Number(k)); });
+
+
   window._startReplayStates[key]=st;
   render();
   start();
@@ -3788,8 +3941,6 @@ function renderStartR(rd){
                     : dtlVal >= DTL_CLEAR_M ? 'var(--green)'
                     : dtlVal >= 0           ? 'var(--yellow)'
                     :                         'var(--red)';
-    const dq = rd.dataQuality ? rd.dataQuality[s.sail] : null;
-    const dqCol = dq?.score==='HIGH' ? 'var(--green)' : dq?.score==='MEDIUM' ? 'var(--yellow)' : 'var(--red)';
     const tr = document.createElement('tr');
     tr.dataset.rank = String(i);
     tr.dataset.dtl  = String(s.distGun ?? 9999);
@@ -3806,24 +3957,21 @@ function renderStartR(rd){
                  :                   'var(--red)';
     tr.innerHTML = `
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
-      <td><div class="td" style="flex-direction:column;align-items:flex-start;gap:2px">
-        <div style="display:flex;align-items:center;gap:5px">
-          <span class="sn" style="color:${c}">${s.sail}</span>
-          ${isOCS ? '<span style="font-size:8px;font-weight:700;color:#ff3355;font-family:Orbitron,monospace;background:rgba(255,51,85,.2);padding:1px 4px;border-radius:2px;border:1px solid #ff335555">OCS</span>' : ''}
-        </div>
-        <span style="font-size:7px;color:var(--muted)">${TEAM_NAMES[s.sail]||''}</span>
-        ${dq?`<span style="font-size:6px;color:${dqCol};opacity:.7">${dq.score} · ${dq.coverage}%</span>`:''}
+      <td><div class="td" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="sn" style="font-size:13px;color:${c}">${s.sail}</span>
+        <span style="font-size:9px;color:var(--muted)">${TEAM_NAMES[s.sail]||''}</span>
+        ${isOCS ? '<span style="font-size:8px;font-weight:700;color:#ff3355;font-family:Orbitron,monospace;background:rgba(255,51,85,.2);padding:1px 4px;border-radius:2px;border:1px solid #ff335555">OCS</span>' : ''}
       </div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:12px;font-weight:700;color:${signedCol}">${s.distGun!=null?(s.distGun>=0?'+':'')+s.distGun.toFixed(1)+'m':'—'}</span></div></td>
-      <td><div class="td"><div class="br">
-        <div class="bb"><div class="bf" style="width:${linePctBar}%;background:${c}"></div></div>
-        <div class="bv" style="color:${c}">${s.linePct!=null?s.linePct.toFixed(0)+'%':'—'}</div>
-      </div></div></td>
       <td><div class="td"><div class="br">
         <div class="bb"><div class="bf" style="width:${spdBar}%;background:${c}"></div></div>
         <div class="bv" style="color:${c}">${s.sogGun!=null?s.sogGun.toFixed(1)+'kts':'—'}</div>
       </div></div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:11px;color:${c}">${s.crossingTime!=null?'+'+s.crossingTime.toFixed(1)+'s':'—'}</span></div></td>
+      <td><div class="td"><div class="br">
+        <div class="bb"><div class="bf" style="width:${linePctBar}%;background:${c}"></div></div>
+        <div class="bv" style="color:${c}">${s.linePct!=null?s.linePct.toFixed(0)+'%':'—'}</div>
+      </div></div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:11px;color:${t95Col}">${s.accel!=null?s.accel.toFixed(1)+'s':'—'}</span></div></td>
     `;
     tb.appendChild(tr);
@@ -3860,9 +4008,7 @@ function renderL1R(rd){
     tr.dataset.heelsd = String(s.heelSd ?? 9999);
     tr.innerHTML=`
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
-      <td><div class="td"><span class="sn" style="color:${c}">${s.sail}</span><br><span style="font-size:7px;color:var(--muted);letter-spacing:.5px">${TEAM_NAMES[s.sail]||''}</span></div></td>
-      <td><div class="td"><span class="mn" style="font-size:9px">${Math.round(s.distFromPin)}m</span></div></td>
-      <td><div class="td"><span class="ms">${gap}</span></div></td>
+      <td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s.sail}</span><br><span style="font-size:9px;color:var(--muted);letter-spacing:.5px">${TEAM_NAMES[s.sail]||''}</span></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)}m</div></div></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td>
       <td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>
@@ -3878,9 +4024,9 @@ function renderL1R(rd){
     tr.style.opacity='0.45';
     tr.innerHTML=`
       <td><div class="td"><span class="rk">—</span></div></td>
-      <td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td>
+      <td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td>
       <td><div class="td"><span style="color:var(--muted2);font-size:8px">NO MARK</span></div></td>
-      <td colspan="5"><div class="td"><span style="color:var(--muted2);font-size:8px">mark not detected</span></div></td>
+      <td colspan="3"><div class="td"><span style="color:var(--muted2);font-size:8px">mark not detected</span></div></td>
     `;
     tb.appendChild(tr);
   });
@@ -4421,19 +4567,6 @@ function buildUI(){
     rtRow.className = 'race-tabs';
     rtRow.id = `raceTabs${di}`;
 
-    const dayTwsBar = document.createElement('div');
-    dayTwsBar.className = 'nc';
-    dayTwsBar.style.cssText='margin:0 0 10px 0;padding:10px 12px';
-    dayTwsBar.innerHTML = `<div class="nt">POLAR INPUT — DAY TRUE WIND SPEED</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px">
-        <span style="font-size:10px;color:var(--muted)">Day override (kt)</span>
-        <input id="dayTwsInput${di}" type="number" min="1" step="0.1" placeholder="optional" style="width:88px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif">
-        <button class="export-btn" style="padding:6px 10px" onclick="saveDayTwsOverride(${di})">SAVE DAY TWS</button>
-        <button class="export-btn" style="padding:6px 10px" onclick="clearDayTwsOverride(${di})">CLEAR DAY</button>
-        <span id="dayTwsState${di}" style="font-size:10px;color:var(--muted2)"></span>
-      </div>
-      <div style="font-size:9px;color:var(--muted);margin-top:6px">Day TWS applies to all races on this day unless a race-level override is entered.</div>`;
-
     // Race content
     const rcContent = document.createElement('div');
     rcContent.id = `raceContent${di}`;
@@ -4445,7 +4578,6 @@ function buildUI(){
       <div class="load-sub">Detecting race starts</div>
     </div>`;
 
-    dp.appendChild(dayTwsBar);
     dp.appendChild(rtRow);
     dp.appendChild(rcContent);
     dayPanelsEl.appendChild(dp);
@@ -4493,6 +4625,7 @@ function switchDay(di){ currentDay=di;
   // Trigger first-race load for this day if not yet loaded
   const event = EVENTS[di];
   updateDayTwsUi(di);
+  syncBottomTwsControls();
   if(event && event._guns && !event._firstRaceLoaded){
     event._firstRaceLoaded = true;
     const guns = event._guns;
@@ -4575,6 +4708,7 @@ let _raceQueue = Promise.resolve();
 
 function selectRace(event, di, raceNum, guns, ri){
   event._dayIdx = di;
+  event._activeRaceNum = raceNum;
 
   // Update tab active state immediately (before any async work)
   document.querySelectorAll(`#raceTabs${di} .race-tab`).forEach(t=>t.classList.remove('active'));
@@ -4590,7 +4724,8 @@ function selectRace(event, di, raceNum, guns, ri){
     document.querySelectorAll(`#raceContent${di} > div`).forEach(p=>p.style.display='none');
     existing.style.display='block';
     const rd=(event._races||[]).find(r=>r && r.raceNum===raceNum && (r._dayIdx===di || event._dayIdx===di));
-    if(rd){ requestAnimationFrame(()=>{ try{ const saved=saveGlobals(); setGlobals(rd); drawWindR(rd); drawCourseR(rd); if(rd.GUND?.length && rd.RC && rd.PIN) drawGunR(rd); if(rd.T50?.length && rd.RC && rd.PIN) drawT50R(rd); if(rd.RC && rd.PIN) initStartReplayR(rd); restoreGlobals(saved);}catch(e){ console.warn('revisit redraw failed', raceNum, e); } }); }
+    if(rd){ requestAnimationFrame(()=>{ try{ const saved=saveGlobals(); setGlobals(rd); drawWindR(rd); drawCourseR(rd); if(rd.GUND?.length && rd.RC && rd.PIN) drawGunR(rd); if(rd.T50?.length && rd.RC && rd.PIN) drawT50R(rd); if(rd.RC && rd.PIN) initStartReplayR(rd); restoreGlobals(saved);}catch(e){ console.warn('revisit redraw failed', raceNum, e); } }); updateRaceTwsUi(rd); }
+    syncBottomTwsControls();
     return;
   }
 
@@ -4610,6 +4745,7 @@ function selectRace(event, di, raceNum, guns, ri){
     let rd;
     try {
       rd = await loadRace(event, raceNum, gunTs, nextGunTs, msgEl);
+      applyReachMarkOverride(rd);
     } catch(e){
       panel.innerHTML = `<div class="err">ERROR LOADING RACE ${raceNum} (fetch): ${e.message}</div>`;
       console.error('loadRace error R'+raceNum, e);
@@ -4622,6 +4758,7 @@ function selectRace(event, di, raceNum, guns, ri){
     panel.innerHTML = '';
     try {
       renderRacePanel(panel, rd);
+      syncBottomTwsControls();
     } catch(e){
       panel.innerHTML = `<div class="err">ERROR RENDERING RACE ${raceNum}: ${e.message}<br><pre style="font-size:9px;white-space:pre-wrap">${e.stack}</pre></div>`;
       console.error('renderRacePanel error R'+raceNum, e);
@@ -4662,6 +4799,7 @@ function handleReachMarkClick(e, canvasEl){
   // Update reach mark on raceData
   const t_s = 50; // keep nominal T+50 label
   rd.rm = { lat, lon, boat_lat: lat, boat_lon: lon, ts: rd.gunTs + 50000, t_s, manual: true };
+  saveReachMarkOverride(rd, lat, lon);
 
   // Flash feedback on canvas
   const ctx = canvasEl.getContext('2d');
@@ -4692,24 +4830,13 @@ function handleReachMarkClick(e, canvasEl){
     const rlDist = Math.round(hav(rd.PIN.lat, rd.PIN.lon, lat, lon));
     const rlB = brg(rd.PIN.lat, rd.PIN.lon, lat, lon);
     const twa = rd.WF != null ? Math.abs(((rlB - rd.WF + 180 + 360)%360)-180) : null;
-    // Update LEG LENGTH in strip
-    const legEl = document.querySelector(`#racePanel${rd._dayIdx}_${raceNum} .sc .sv`);
     const scElems = document.querySelectorAll(`#racePanel${rd._dayIdx}_${raceNum} .sc`);
-    // Find the "LEG LENGTH" sc
+    // Update REACH LEG in strip
     scElems.forEach(sc => {
-      if(sc.querySelector('.sl')?.textContent === 'LEG LENGTH'){
-        sc.querySelector('.sv').textContent = rlDist + 'm';
+      if(sc.querySelector('.sl')?.textContent === 'REACH LEG'){
+        sc.querySelector('.sv').textContent = rlDist + 'm' + (twa!=null ? ' · ' + twa.toFixed(0)+'°' : '');
       }
     });
-    // Update geometry bar reach leg entry
-    const gbRow = document.querySelector(`#racePanel${rd._dayIdx}_${raceNum} .gb-row`);
-    if(gbRow){
-      const reachGb = [...gbRow.querySelectorAll('.gb')].find(el=>el.querySelector('.gb-lbl')?.textContent.includes('Reach'));
-      if(reachGb){
-        reachGb.querySelector('.gb-val').textContent = rlDist + 'm' + (twa!=null ? ' · ' + twa.toFixed(0)+'° TWA' : '');
-        reachGb.querySelector('.gb-sub').textContent = rlB.toFixed(1) + '° bearing (Pin→mark)';
-      }
-    }
   }
   // Show confirmation toast
   const rlDistShow = rd.PIN ? Math.round(hav(rd.PIN.lat, rd.PIN.lon, lat, lon)) : '?';
@@ -4837,8 +4964,54 @@ function sortTable(tableId, col, defaultDir, respectOCS){
 
 let currentDay = 0;
 
+async function preloadAllRacesOnOpen(){
+  for(let di=0; di<EVENTS.length; di++){
+    const event=EVENTS[di];
+    const guns=event?._guns || [];
+    if(!guns.length) continue;
+    for(let ri=0; ri<guns.length; ri++){
+      const [raceNum, gunTs]=guns[ri];
+      if(event._races?.[ri]) continue;
+      const nextGunTs=guns[ri+1]?.[1] ?? null;
+      _raceQueue = _raceQueue.then(async()=>{
+        try{
+          const rd = await loadRace(event, raceNum, gunTs, nextGunTs, null);
+          applyReachMarkOverride(rd);
+          event._races[ri]=rd;
+          const tabEl=document.getElementById(`raceTab${di}_${raceNum}`);
+          if(tabEl) tabEl.classList.add('loaded');
+        }catch(e){ console.warn('preload race failed', di, raceNum, e); }
+      });
+    }
+  }
+  await _raceQueue;
+}
+
+function exportFixedReport(){
+  const twsStore=getTwsOverrideStore();
+  const rmStore=getReachMarkOverrideStore();
+  const payload={twsStore, rmStore, builtAt:new Date().toISOString()};
+  let html=document.documentElement.outerHTML;
+  const twsKey=POLAR_TWS_OVERRIDE_KEY;
+  const rmKey=REACH_MARK_OVERRIDE_KEY;
+  const payloadJson=JSON.stringify(payload).replace(/</g,'\u003c');
+  const inject=`<script>(function(){var p=${payloadJson};try{localStorage.setItem(${JSON.stringify('${twsKey}')}, JSON.stringify(p.twsStore||{days:{},races:{}}));localStorage.setItem(${JSON.stringify('${rmKey}')}, JSON.stringify(p.rmStore||{races:{}}));}catch(e){console.warn('fixed override seed failed',e);}})();<\/script>`
+    .replace('${twsKey}', twsKey)
+    .replace('${rmKey}', rmKey);
+  html=html.replace('</body>', `${inject}
+</body>`);
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const d=EVENTS?.[currentDay]?.label || 'day';
+  a.download=`m32_fixed_${d.replace(/\s+/g,'_').toLowerCase()}.html`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
 async function init(){
   buildUI();
+  syncBottomTwsControls();
   
   // Load events serially — detectGuns is fast but we want buildRaceTabs (which
   // triggers selectRace for day 0) to complete before moving to the next day.
@@ -4862,6 +5035,9 @@ async function init(){
       const ld = document.getElementById(`dayLoad${di}`);
       if(ld) ld.innerHTML = `<div class="err">FAILED: ${e.message}</div>`;
     }
+  }
+  if(PRELOAD_ALL_RACES_ON_OPEN){
+    await preloadAllRacesOnOpen();
   }
 }
 

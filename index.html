@@ -4049,12 +4049,21 @@ function renderEventSummary(panelEl, allRaces){
   const avg  = arr => { const v=arr.filter(x=>x!=null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
   const sum  = arr => arr.filter(x=>x!=null).reduce((a,b)=>a+b,0);
   const fmtN = (v,dp=1) => v!=null ? v.toFixed(dp) : '—';
+  const normStartPct = v => (v==null ? null : Math.max(0, Math.min(100, v)));
+  const startRegion = v => {
+    if(v==null) return null;
+    const pct = normStartPct(v);
+    if(pct <= 33) return 'LOW';
+    if(pct <= 66) return 'MID';
+    return 'HIGH';
+  };
 
   const allBoats = [...new Set(allRaces.flatMap(r=>r.BOATS.filter(b=>!EXCLUDED_BOATS.includes(b))))].sort();
   const N = allRaces.length;
 
   const boatData = {};
-  allBoats.forEach(b=>{ boatData[b]={ reachPos:[], finPos:[], delta:[], distGun:[], sogGun:[], t95:[], ocsVakaros:[], raceDay:[] }; });
+  allBoats.forEach(b=>{ boatData[b]={ reachPos:[], finPos:[], delta:[], distGun:[], sogGun:[], t95:[], startPct:[], ocsVakaros:[], raceDay:[] }; });
+  const regionStats = { LOW:[], MID:[], HIGH:[] };
 
   for(const rd of allRaces){
     const dayIdx = rd.event?._dayIdx ?? 0;
@@ -4071,6 +4080,11 @@ function renderEventSummary(panelEl, allRaces){
       const gd=rd.GUND?.find(d=>d.sail===b);
       boatData[b].sogGun.push(gd?gd.sog:null);
       boatData[b].t95.push(ss?.accel != null ? ss.accel : null);
+      const sp = normStartPct(ss?.startLinePct ?? ss?.linePct);
+      boatData[b].startPct.push(sp);
+      const reachPos = rp>=0?rp+1:null;
+      const rg = startRegion(sp);
+      if(rg && reachPos!=null) regionStats[rg].push(reachPos);
       const ocsVak=rd.ocsFromTelemetry?rd.ocsFromTelemetry.has(b):false;
       boatData[b].ocsVakaros.push(ocsVak);
       boatData[b].raceDay.push(EVENTS[dayIdx]?.label||`D${dayIdx+1}`);
@@ -4085,6 +4099,7 @@ function renderEventSummary(panelEl, allRaces){
       avgReach: avg(d.reachPos), avgFin: avg(d.finPos),
       avgDelta: avg(d.delta), avgDist: avg(d.distGun),
       avgSog: avg(d.sogGun), avgT95: avg(d.t95),
+      avgStartPct: avg(d.startPct),
       ocsCount: sum(d.ocsVakaros.map(v=>v?1:0)),
       nRaces, totalPts: sum(d.finPos.filter(v=>v!=null))
     };
@@ -4135,6 +4150,7 @@ function renderEventSummary(panelEl, allRaces){
       {key:'avgDist', label:'AVG DTL'},
       {key:'avgSog', label:'AVG SPD@GUN'},
       {key:'avgT95', label:'AVG T→95%'},
+      {key:'avgStartPct', label:'START %'},
       {key:'ocsCount', label:'OCS'},
     ];
     const hdrs = colDefs.map(c=>{
@@ -4158,11 +4174,28 @@ function renderEventSummary(panelEl, allRaces){
         <td style="text-align:center;color:var(--muted);font-family:Share Tech Mono,monospace">${ag.avgDist!=null?ag.avgDist.toFixed(1)+'m':'—'}</td>
         <td style="text-align:center;color:var(--muted);font-family:Share Tech Mono,monospace">${ag.avgSog!=null?ag.avgSog.toFixed(1)+'kts':'—'}</td>
         <td style="text-align:center;color:var(--muted);font-family:Share Tech Mono,monospace">${ag.avgT95!=null?ag.avgT95.toFixed(1)+'s':'—'}</td>
+        <td style="text-align:center;color:var(--muted);font-family:Share Tech Mono,monospace">${ag.avgStartPct!=null?Math.round(ag.avgStartPct)+'%':'—'}</td>
         <td style="text-align:center">${ocsCell(ag.ocsCount)}</td>
       </tr>`;
     }).join('');
 
     return `<table class="ds-avg-table" style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr>${hdrs}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function renderRegionTable(){
+    const rows = ['LOW','MID','HIGH'].map(r=>{
+      const vals = regionStats[r];
+      const av = avg(vals);
+      return `<tr>
+        <td style="padding:6px 8px;font-family:Orbitron,monospace">${r}</td>
+        <td style="padding:6px 8px;text-align:center;font-family:Share Tech Mono,monospace">${av!=null?av.toFixed(1):'—'}</td>
+        <td style="padding:6px 8px;text-align:center;font-family:Share Tech Mono,monospace">${vals.length}</td>
+      </tr>`;
+    }).join('');
+    return `<table class="ds-avg-table" style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead><tr><th style="text-align:left;padding:4px 8px">REGION</th><th style="text-align:center;padding:4px 8px">AVG REACH POS</th><th style="text-align:center;padding:4px 8px">BOATS</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
   }
 
   const fleetAvgSog = avg(allBoats.map(b=>aggr[b].avgSog));
@@ -4195,6 +4228,10 @@ function renderEventSummary(panelEl, allRaces){
           <div class="ds-hl-lbl">TOTAL VAKAROS OCS CALLS</div>
         </div>
       </div>
+      <div class="ds-section" style="margin-bottom:12px">
+        <div class="ds-title">START LINE REGION PERFORMANCE</div>
+        <div>${renderRegionTable()}</div>
+      </div>
       <div class="ds-title">REGATTA AVERAGES — click column header to sort</div>
       <div id="eventSummaryTableWrap">${renderTable()}</div>
     </div>`;
@@ -4220,6 +4257,14 @@ function renderDaySummary(panelEl, event, races){
   const avg  = arr => { const v=arr.filter(x=>x!=null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
   const sum  = arr => arr.filter(x=>x!=null).reduce((a,b)=>a+b,0);
   const fmtN = (v,dp=1) => v!=null ? v.toFixed(dp) : '—';
+  const normStartPct = v => (v==null ? null : Math.max(0, Math.min(100, v)));
+  const startRegion = v => {
+    if(v==null) return null;
+    const pct = normStartPct(v);
+    if(pct <= 33) return 'LOW';
+    if(pct <= 66) return 'MID';
+    return 'HIGH';
+  };
 
   // ── exclude non-racing boats ──
   const allBoats = [...new Set(loaded.flatMap(r=>
@@ -4233,7 +4278,8 @@ function renderDaySummary(panelEl, event, races){
   // ══════════════════════════════════════════════════════
   // boatData[sail] = { reachPos[], finPos[], delta[], distGun[], sogGun[], ocsOfficial[], ocsVakaros[] }
   const boatData = {};
-  allBoats.forEach(b=>{ boatData[b]={ reachPos:[], finPos:[], delta:[], distGun:[], sogGun:[], t95:[], ocsVakaros:[] }; });
+  allBoats.forEach(b=>{ boatData[b]={ reachPos:[], finPos:[], delta:[], distGun:[], sogGun:[], t95:[], startPct:[], ocsVakaros:[] }; });
+  const regionStats = { LOW:[], MID:[], HIGH:[] };
 
   for(const rd of loaded){
     const officialRace = (OFFICIAL_RESULTS_BY_DAY[rd.event._dayIdx||0]||OFFICIAL_RESULTS_BY_DAY[0])[rd.raceNum] || {};
@@ -4271,6 +4317,12 @@ function renderDaySummary(panelEl, event, races){
       // 5b. T→95% time from the start report
       boatData[b].t95.push(ss?.accel != null ? ss.accel : null);
 
+      // 5c. Start line position (0%=pin, 100%=boat)
+      const sp = normStartPct(ss?.startLinePct ?? ss?.linePct);
+      boatData[b].startPct.push(sp);
+      const rg = startRegion(sp);
+      if(rg && reachPos!=null) regionStats[rg].push(reachPos);
+
       // 6. Official OCS — Vakaros telemetry status=1 flag (authoritative)
       // ocsFromTelemetry is a Set of sail numbers called OCS by Vakaros this race
       const ocsVak = rd.ocsFromTelemetry ? rd.ocsFromTelemetry.has(b) : null;
@@ -4289,6 +4341,7 @@ function renderDaySummary(panelEl, event, races){
       avgDist   : avg(d.distGun),
       avgSog    : avg(d.sogGun),
       avgT95    : avg(d.t95),
+      avgStartPct: avg(d.startPct),
       ocsCount  : sum(d.ocsVakaros.map(v=>v?1:0)),
       nRaces    : d.reachPos.filter(x=>x!=null).length,
       // per-race arrays for slope chart
@@ -4362,6 +4415,7 @@ function renderDaySummary(panelEl, event, races){
       {key:'avgDist', label:'AVG DIST TO LINE (m)', sortKey:'avgDist'},
       {key:'avgSog',  label:'AVG SPD@GUN (kts)',sortKey:'avgSog'},
       {key:'avgT95', label:'AVG T→95% (s)', sortKey:'avgT95'},
+      {key:'avgStartPct', label:'START %', sortKey:'avgStartPct'},
       {key:'ocsCount',label:'OCS (VAKAROS)',    sortKey:'ocsCount'},
       {key:'nRaces',  label:'RACES',            sortKey:'nRaces'},
     ];
@@ -4389,12 +4443,26 @@ function renderDaySummary(panelEl, event, races){
         <td style="text-align:center"><span class="ds-mono">${ag.avgDist!=null?Math.round(ag.avgDist)+'m':'—'}</span></td>
         <td style="text-align:center"><span class="ds-mono">${fmtN(ag.avgSog,2)}</span></td>
         <td style="text-align:center"><span class="ds-mono">${ag.avgT95!=null?ag.avgT95.toFixed(1)+'s':'—'}</span></td>
+        <td style="text-align:center"><span class="ds-mono">${ag.avgStartPct!=null?Math.round(ag.avgStartPct)+'%':'—'}</span></td>
         <td style="text-align:center">${ocsCell(ag.ocsCount)}</td>
         <td style="text-align:center"><span class="ds-mono">${ag.nRaces}/${N}</span></td>
       </tr>`;
     }).join('');
 
     return `<table class="ds-avg-table"><thead><tr>${hdrs}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function renderRegionTable(){
+    const rows = ['LOW','MID','HIGH'].map(r=>{
+      const vals = regionStats[r];
+      const av = avg(vals);
+      return `<tr>
+        <td style="font-family:Orbitron,monospace">${r}</td>
+        <td style="text-align:center"><span class="ds-mono">${av!=null?av.toFixed(1):'—'}</span></td>
+        <td style="text-align:center"><span class="ds-mono">${vals.length}</span></td>
+      </tr>`;
+    }).join('');
+    return `<table class="ds-avg-table"><thead><tr><th>REGION</th><th>AVG REACH POS</th><th>BOATS</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
 
   function renderSlopeChart(){
@@ -4478,6 +4546,11 @@ function renderDaySummary(panelEl, event, races){
         <div class="ds-hl-val" style="color:${totalOCS>0?'var(--red)':'var(--cyan)'}">${totalOCS}</div>
         <div class="ds-hl-lbl">TOTAL VAKAROS OCS CALLS</div>
       </div>
+    </div>
+
+    <div class="ds-section">
+      <div class="ds-title">START LINE REGION PERFORMANCE</div>
+      <div>${renderRegionTable()}</div>
     </div>
 
     <!-- Averages table -->

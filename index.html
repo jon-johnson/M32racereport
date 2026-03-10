@@ -86,7 +86,7 @@ a{color:var(--cyan);text-decoration:none}
 .replayStartGrid>.mc{min-width:0}
 .replayStartGrid>*{min-width:0}
 .replayPortraitCard{max-width:460px;width:100%;justify-self:start}
-.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto;touch-action:none}
+.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto;touch-action:auto}
 .replayControls{display:flex;align-items:center;gap:8px;font-size:8px;flex-wrap:wrap;justify-content:flex-end}
 .replaySpeedGroup{display:flex;align-items:center;gap:4px}
 .replaySpeedBtn{background:#0d1624;border:1px solid #2e4965;color:#9cc5ff;border-radius:6px;padding:3px 7px;font:700 9px Orbitron,sans-serif;cursor:pointer}
@@ -202,18 +202,18 @@ tr:hover td{background:var(--bg3)}
 /* ── WIND CANVAS ── */
 #cWindDay{display:block;width:100%;height:120px}
 
-.bottom-actions{display:flex;gap:10px;justify-content:flex-end;align-items:flex-end;flex-wrap:wrap;padding:12px 20px 18px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
-.bottom-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.tws-box{background:var(--bg3);border:1px solid var(--muted2);border-radius:6px;padding:8px 10px;min-width:250px}
+.bottom-actions{display:flex;gap:12px;justify-content:center;align-items:stretch;flex-wrap:wrap;padding:14px 20px 20px;border-top:1px solid var(--muted2);margin-top:8px;background:var(--bg2)}
+.bottom-controls{display:grid;grid-template-columns:repeat(2,minmax(260px,320px));gap:12px;align-items:stretch;justify-content:center}
+.tws-box{background:var(--bg3);border:1px solid var(--muted2);border-radius:6px;padding:10px 12px;min-width:0;width:100%}
 .tws-title{font:700 9px Orbitron,monospace;color:var(--muted);letter-spacing:.8px;margin-bottom:6px}
 .tws-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tws-input{width:90px;background:#0f1822;border:1px solid #263647;color:#e9f1fa;border-radius:6px;padding:6px 8px;font:600 11px Orbitron,sans-serif}
 .action-btn{font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;padding:6px 10px;border-radius:6px;cursor:pointer}
 .action-btn.alt{background:rgba(122,154,176,.08);border-color:rgba(122,154,176,.35);color:var(--muted)}
 .tws-state{font-size:10px;color:var(--muted2)}
-.course-card{grid-column:1;grid-row:1 / span 2}
+.course-card{grid-column:1;grid-row:1}
 .official-card{grid-column:2;grid-row:1}
-.wind-card{grid-column:2;grid-row:2}
+.wind-card{grid-column:3;grid-row:1}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
@@ -282,7 +282,7 @@ tr:hover td{background:var(--bg3)}
   .course-and-right > div,
   .course-and-right .mc{min-width:0;max-width:none;justify-self:stretch}
 
-  .bottom-actions{justify-content:stretch;align-items:stretch}
+  .bottom-actions{justify-content:center;align-items:stretch}
   .bottom-controls{display:grid;grid-template-columns:1fr;width:100%}
   .tws-box{min-width:0;width:100%}
   .tws-row .action-btn{flex:1 1 auto;text-align:center}
@@ -480,7 +480,7 @@ tr:hover td{background:var(--bg3)}
       <div id="raceTwsStateBottom" class="tws-state"></div>
     </div>
   </div>
-  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="
+  <button class="export-btn" id="exportBtn" onclick="exportPDF()" style="min-width:210px;
   font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
   background:rgba(0,204,255,.1);border:1px solid rgba(0,204,255,.4);color:#00ccff;
   padding:6px 14px;border-radius:3px;cursor:pointer;
@@ -489,7 +489,7 @@ tr:hover td{background:var(--bg3)}
   onmouseout="this.style.background='rgba(0,204,255,.1)'">
   ⬇ PDF — <span id="exportDayLabel"></span>
 </button>
-<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="
+<button class="export-btn" id="polarBtn" onclick="showPolarProposal()" style="min-width:210px;
   font-family:Orbitron,monospace;font-size:9px;font-weight:700;letter-spacing:1px;
   background:rgba(0,255,153,.08);border:1px solid rgba(0,255,153,.35);color:#00ff99;
   padding:6px 14px;border-radius:3px;cursor:pointer;
@@ -2955,7 +2955,7 @@ function renderRacePanel(panelEl, rd){
     </tr></thead><tbody id="${l1BodyId}"></tbody></table></div>
 
     <!-- Course + Official results + Wind -->
-    <div class="course-and-right" style="display:grid;grid-template-columns:440px 1fr;gap:16px;margin-bottom:12px;align-items:start">
+    <div class="course-and-right" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;align-items:start">
       <div class="official-card">
         ${(()=>{
           const or=(OFFICIAL_RESULTS_BY_DAY[rd.event._dayIdx||0]||OFFICIAL_RESULTS_BY_DAY[0])[raceNum];
@@ -3474,7 +3474,7 @@ function buildStartReplayGeom(rd){
   return {toM,r,rcR,pnR,lineLen,widthSpan,ySpan,sampleXs,sampleYs,rot};
 }
 
-function startReplayLayout(rd,W,H,st){
+function startReplayLayout(rd,W,H){
   const g=rd._replayGeom || (rd._replayGeom=buildStartReplayGeom(rd));
   if(!g) return null;
   const {rcR,pnR,lineLen,sampleXs,sampleYs}=g;
@@ -3491,20 +3491,17 @@ function startReplayLayout(rd,W,H,st){
   const scaledMaxX2=Math.max(...sampleXs.map(v=>(v-cxOff)*scale));
   const plotCX=(leftPad + (-scaledMinX2) + (W-rightPad - (scaledMaxX2-scaledMinX2))/2);
   const plotCY=H/2;
-  const z=Math.max(1, Number(st?.zoom)||1);
-  const panX=Number(st?.panX)||0;
-  const panY=Number(st?.panY)||0;
-  const tX=rx=>plotCX+((rx-cxOff)*scale)*z + panX;
-  const tY=ry=>plotCY-((ry-cyOff)*scale)*z + panY;
+  const tX=rx=>plotCX+(rx-cxOff)*scale;
+  const tY=ry=>plotCY-(ry-cyOff)*scale;
   const rx=tX(rcR.rx), ry=tY(rcR.ry), px=tX(pnR.rx), py=tY(pnR.ry);
   const slPx=Math.hypot(rx-px, ry-py);
   const mpp=hav(rd.RC.lat,rd.RC.lon,rd.PIN.lat,rd.PIN.lon)/Math.max(slPx,1);
   return {tX,tY,rx,ry,px,py,mpp,rot:g.rot};
 }
 
-function drawStartReplayFrame(rd, relSec, st){
+function drawStartReplayFrame(rd, relSec){
   const replayWEl=document.getElementById(raceDomId(rd,'cReplay')); const targetH=Math.max(620, Math.round((replayWEl?.offsetWidth||380)*1.62)); const {ctx,W,H}=cvs(raceDomId(rd,'cReplay'),targetH); cbg(ctx,W,H);
-  const lay=startReplayLayout(rd,W,H,st); if(!lay) return;
+  const lay=startReplayLayout(rd,W,H); if(!lay) return;
   const {tX,tY,rx,ry,px,py,mpp,rot}=lay;
   const {toM,r}=rd._replayGeom;
   drawSL(ctx,rx,ry,px,py,false);
@@ -3566,16 +3563,13 @@ function initStartReplayR(rd){
   const speedBtns = {1:document.getElementById(raceDomId(rd,'replaySpeed1')),2:document.getElementById(raceDomId(rd,'replaySpeed2')),4:document.getElementById(raceDomId(rd,'replaySpeed4'))};
   if(!canvas || !slider || !playBtn || !timeEl || canvas.offsetWidth===0) return;
   stopOtherStartReplays(key);
-  let st = window._startReplayStates[key] || {rel:-30, playing:true, timer:null, speed:1, zoom:1, panX:0, panY:0};
+  let st = window._startReplayStates[key] || {rel:-30, playing:true, timer:null, speed:1};
   if(st.timer) clearInterval(st.timer);
   st.playId = raceDomId(rd,'replayPlay');
   st.rel = Number.isFinite(st.rel) ? st.rel : -30;
   st.speed = Number.isFinite(st.speed) ? st.speed : 1;
-  st.zoom = Number.isFinite(st.zoom) ? st.zoom : 1;
-  st.panX = Number.isFinite(st.panX) ? st.panX : 0;
-  st.panY = Number.isFinite(st.panY) ? st.panY : 0;
   const refreshSpeedUI = ()=>{ Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.classList.toggle('active', Number(k)===st.speed); }); };
-  const render = ()=>{ drawStartReplayFrame(rd, st.rel, st); slider.value=String(st.rel); timeEl.textContent=formatReplayLabel(st.rel); refreshSpeedUI(); };
+  const render = ()=>{ drawStartReplayFrame(rd, st.rel); slider.value=String(st.rel); timeEl.textContent=formatReplayLabel(st.rel); refreshSpeedUI(); };
   const start = ()=>{
     if(st.timer) clearInterval(st.timer);
     st.playing=true; playBtn.textContent='Pause';
@@ -3591,14 +3585,6 @@ function initStartReplayR(rd){
   playBtn.onclick = ()=>{ st.playing ? stop() : start(); };
   Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.onclick = ()=>setSpeed(Number(k)); });
 
-  canvas.onclick=()=>{
-    stop();
-    const steps=[1,1.4,1.8,2.4,3.2];
-    const idx=Math.max(0, steps.findIndex(v=>Math.abs(v-st.zoom)<0.12));
-    st.zoom = steps[(idx+1)%steps.length];
-    if(st.zoom===1){ st.panX=0; st.panY=0; }
-    render();
-  };
 
   window._startReplayStates[key]=st;
   render();

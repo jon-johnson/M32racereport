@@ -3911,8 +3911,6 @@ function renderStartR(rd){
                     : dtlVal >= DTL_CLEAR_M ? 'var(--green)'
                     : dtlVal >= 0           ? 'var(--yellow)'
                     :                         'var(--red)';
-    const dq = rd.dataQuality ? rd.dataQuality[s.sail] : null;
-    const dqCol = dq?.score==='HIGH' ? 'var(--green)' : dq?.score==='MEDIUM' ? 'var(--yellow)' : 'var(--red)';
     const tr = document.createElement('tr');
     tr.dataset.rank = String(i);
     tr.dataset.dtl  = String(s.distGun ?? 9999);
@@ -3929,13 +3927,10 @@ function renderStartR(rd){
                  :                   'var(--red)';
     tr.innerHTML = `
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
-      <td><div class="td" style="flex-direction:column;align-items:flex-start;gap:2px">
-        <div style="display:flex;align-items:center;gap:5px">
-          <span class="sn" style="font-size:13px;color:${c}">${s.sail}</span>
-          ${isOCS ? '<span style="font-size:8px;font-weight:700;color:#ff3355;font-family:Orbitron,monospace;background:rgba(255,51,85,.2);padding:1px 4px;border-radius:2px;border:1px solid #ff335555">OCS</span>' : ''}
-        </div>
+      <td><div class="td" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="sn" style="font-size:13px;color:${c}">${s.sail}</span>
         <span style="font-size:9px;color:var(--muted)">${TEAM_NAMES[s.sail]||''}</span>
-        ${dq?`<span style="font-size:6px;color:${dqCol};opacity:.7">${dq.score} · ${dq.coverage}%</span>`:''}
+        ${isOCS ? '<span style="font-size:8px;font-weight:700;color:#ff3355;font-family:Orbitron,monospace;background:rgba(255,51,85,.2);padding:1px 4px;border-radius:2px;border:1px solid #ff335555">OCS</span>' : ''}
       </div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:12px;font-weight:700;color:${signedCol}">${s.distGun!=null?(s.distGun>=0?'+':'')+s.distGun.toFixed(1)+'m':'—'}</span></div></td>
       <td><div class="td"><div class="br">

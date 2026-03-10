@@ -86,7 +86,7 @@ a{color:var(--cyan);text-decoration:none}
 .replayStartGrid>.mc{min-width:0}
 .replayStartGrid>*{min-width:0}
 .replayPortraitCard{max-width:460px;width:100%;justify-self:start}
-.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto}
+.replayCanvasPortrait{display:block;width:100%;max-width:460px;aspect-ratio:3/5;margin:0 auto;touch-action:none}
 .replayControls{display:flex;align-items:center;gap:8px;font-size:8px;flex-wrap:wrap;justify-content:flex-end}
 .replaySpeedGroup{display:flex;align-items:center;gap:4px}
 .replaySpeedBtn{background:#0d1624;border:1px solid #2e4965;color:#9cc5ff;border-radius:6px;padding:3px 7px;font:700 9px Orbitron,sans-serif;cursor:pointer}
@@ -293,7 +293,7 @@ tr:hover td{background:var(--bg3)}
 }
 
 @media(max-width:560px){
-  .strip{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
   .replayControls{justify-content:flex-start;font-size:9px}
   #cWindDay{height:180px}
   .bottom-actions{padding:10px;flex-direction:column}
@@ -1714,8 +1714,8 @@ function rotProj(pts,W,H,px,py){
   const cxOff=(Math.min(...allX)+Math.max(...allX))/2;
   const cyOff=(Math.min(...allY)+Math.max(...allY))/2;
   const plotCX=W/2, plotCY=H/2-18;
-  const tX=rx=>plotCX+(rx-cxOff)*scale;
-  const tY=ry=>plotCY-(ry-cyOff)*scale;
+  const tX=rx=>plotCX+((rx-cxOff)*scale)*z + panX;
+  const tY=ry=>plotCY-((ry-cyOff)*scale)*z + panY;
   return{tX,tY,rcR,pnR,p2};
 }
 
@@ -2893,12 +2893,6 @@ function renderRacePanel(panelEl, rd){
   panelEl.innerHTML = `
     <!-- Strip -->
     <div class="strip">
-      <div class="sc"><div class="sv">${estStr} EST</div><div class="sl">GUN TIME</div></div>
-      <div class="sc"><div class="sv">${BOATS.length}</div><div class="sl">BOATS</div></div>
-      <div class="sc"><div class="sv" id="${saxId}">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div><div class="sl">COURSE AXIS</div></div>
-      <div class="sc"><div class="sv">${rm&&MID?Math.round(hav(MID.lat,MID.lon,rm.lat,rm.lon))+'m':caLen+'m'}</div><div class="sl">LEG LENGTH</div></div>
-      <div class="sc"><div class="sv">${slBrg!=null?slBrg.toFixed(1)+'°':'—'}</div><div class="sl">START LINE</div></div>
-      <div class="sc"><div class="sv">${slLen}m</div><div class="sl">LINE LENGTH</div></div>
       ${WF!=null?`<div class="sc"><div class="sv">${WF.toFixed(0)}°</div><div class="sl">WIND (INFERRED)</div></div>`:''}
       ${rm&&MID?(()=>{
         const rlB=brg(MID.lat,MID.lon,rm.lat,rm.lon);
@@ -2906,6 +2900,10 @@ function renderRacePanel(panelEl, rd){
         const twa=WF!=null?Math.abs(((rlB-WF+180+360)%360)-180):null;
         return `<div class="sc"><div class="sv">${rlDist}m${twa!=null?' · '+twa.toFixed(0)+'°':''}</div><div class="sl">REACH LEG</div></div>`;
       })():''}
+      <div class="sc"><div class="sv">${slBrg!=null?slBrg.toFixed(1)+'°':'—'} · ${slLen}m</div><div class="sl">START LINE</div></div>
+      <div class="sc"><div class="sv" id="${saxId}">${caBrg!=null?caBrg.toFixed(1)+'° / '+((caBrg+180)%360).toFixed(1)+'°':'—'}</div><div class="sl">COURSE AXIS</div></div>
+      <div class="sc"><div class="sv">${estStr} EST</div><div class="sl">GUN TIME</div></div>
+      <div class="sc"><div class="sv">${BOATS.length}</div><div class="sl">BOATS</div></div>
     </div>
 
     <!-- Start maps — PAGE 1 end -->
@@ -3216,6 +3214,14 @@ function visibleGunBoats(rd){
   return (rd?.GUND || []).filter(d=>isVisibleAtGunReplay(rd, d.sail));
 }
 
+function gunMapBoatColor(rd, sail){
+  const i=(rd?.l1Order||[]).indexOf(sail);
+  if(i===0) return '#ffcc00';
+  if(i===1) return '#d1d5db';
+  if(i===2) return '#cd7f32';
+  return '#22c55e';
+}
+
 function drawGunR(rd){
   const {raceNum,RC,PIN,gunTs,ocsFromTelemetry} = rd;
   const GUND = visibleGunBoats(rd);
@@ -3250,8 +3256,8 @@ function drawGunR(rd){
   const lineCenterX=(leftPad + (-scaledMinX2) + (W-rightPad - (scaledMaxX2-scaledMinX2))/2);
   const plotCX=Math.max(leftPad - scaledMinX2, Math.min(W-rightPad - scaledMaxX2, lineCenterX));
   const plotCY=H/2-6;
-  const tX=rx=>plotCX+(rx-cxOff)*scale;
-  const tY=ry=>plotCY-(ry-cyOff)*scale;
+  const tX=rx=>plotCX+((rx-cxOff)*scale)*z + panX;
+  const tY=ry=>plotCY-((ry-cyOff)*scale)*z + panY;
   const rx=tX(rcR.rx),ry=tY(rcR.ry),px=tX(pnR.rx),py=tY(pnR.ry);
 
   // "Forward of the line" = the course side, using the active reach mark when available.
@@ -3464,7 +3470,7 @@ function buildStartReplayGeom(rd){
   return {toM,r,rcR,pnR,lineLen,widthSpan,ySpan,sampleXs,sampleYs,rot};
 }
 
-function startReplayLayout(rd,W,H){
+function startReplayLayout(rd,W,H,st){
   const g=rd._replayGeom || (rd._replayGeom=buildStartReplayGeom(rd));
   if(!g) return null;
   const {rcR,pnR,lineLen,sampleXs,sampleYs}=g;
@@ -3481,17 +3487,20 @@ function startReplayLayout(rd,W,H){
   const scaledMaxX2=Math.max(...sampleXs.map(v=>(v-cxOff)*scale));
   const plotCX=(leftPad + (-scaledMinX2) + (W-rightPad - (scaledMaxX2-scaledMinX2))/2);
   const plotCY=H/2;
-  const tX=rx=>plotCX+(rx-cxOff)*scale;
-  const tY=ry=>plotCY-(ry-cyOff)*scale;
+  const z=Math.max(1, Number(st?.zoom)||1);
+  const panX=Number(st?.panX)||0;
+  const panY=Number(st?.panY)||0;
+  const tX=rx=>plotCX+((rx-cxOff)*scale)*z + panX;
+  const tY=ry=>plotCY-((ry-cyOff)*scale)*z + panY;
   const rx=tX(rcR.rx), ry=tY(rcR.ry), px=tX(pnR.rx), py=tY(pnR.ry);
   const slPx=Math.hypot(rx-px, ry-py);
   const mpp=hav(rd.RC.lat,rd.RC.lon,rd.PIN.lat,rd.PIN.lon)/Math.max(slPx,1);
   return {tX,tY,rx,ry,px,py,mpp,rot:g.rot};
 }
 
-function drawStartReplayFrame(rd, relSec){
+function drawStartReplayFrame(rd, relSec, st){
   const replayWEl=document.getElementById(raceDomId(rd,'cReplay')); const targetH=Math.max(620, Math.round((replayWEl?.offsetWidth||380)*1.62)); const {ctx,W,H}=cvs(raceDomId(rd,'cReplay'),targetH); cbg(ctx,W,H);
-  const lay=startReplayLayout(rd,W,H); if(!lay) return;
+  const lay=startReplayLayout(rd,W,H,st); if(!lay) return;
   const {tX,tY,rx,ry,px,py,mpp,rot}=lay;
   const {toM,r}=rd._replayGeom;
   drawSL(ctx,rx,ry,px,py,false);
@@ -3522,7 +3531,7 @@ function drawStartReplayFrame(rd, relSec){
     ctx.strokeStyle=reachRankColor(rd, sail)+'aa'; ctx.lineWidth=1.3;
     ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(ex,ey); ctx.stroke();
     ctx.fillStyle=reachRankColor(rd, sail)+'aa'; ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(ex-Math.sin(hr-0.45)*5,ey+Math.cos(hr-0.45)*5); ctx.lineTo(ex-Math.sin(hr+0.45)*5,ey+Math.cos(hr+0.45)*5); ctx.closePath(); ctx.fill();
-    drawCat(ctx,bx,by,screenHdg,COL[sail]||'#888',sail,mpp,null);
+    drawCat(ctx,bx,by,screenHdg,gunMapBoatColor(rd,sail),sail,mpp,null);
     ctx.restore();
   }
   const boxW=78, boxH=22;
@@ -3553,13 +3562,16 @@ function initStartReplayR(rd){
   const speedBtns = {1:document.getElementById(raceDomId(rd,'replaySpeed1')),2:document.getElementById(raceDomId(rd,'replaySpeed2')),4:document.getElementById(raceDomId(rd,'replaySpeed4'))};
   if(!canvas || !slider || !playBtn || !timeEl || canvas.offsetWidth===0) return;
   stopOtherStartReplays(key);
-  let st = window._startReplayStates[key] || {rel:-30, playing:true, timer:null, speed:1};
+  let st = window._startReplayStates[key] || {rel:-30, playing:true, timer:null, speed:1, zoom:1, panX:0, panY:0};
   if(st.timer) clearInterval(st.timer);
   st.playId = raceDomId(rd,'replayPlay');
   st.rel = Number.isFinite(st.rel) ? st.rel : -30;
   st.speed = Number.isFinite(st.speed) ? st.speed : 1;
+  st.zoom = Number.isFinite(st.zoom) ? st.zoom : 1;
+  st.panX = Number.isFinite(st.panX) ? st.panX : 0;
+  st.panY = Number.isFinite(st.panY) ? st.panY : 0;
   const refreshSpeedUI = ()=>{ Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.classList.toggle('active', Number(k)===st.speed); }); };
-  const render = ()=>{ drawStartReplayFrame(rd, st.rel); slider.value=String(st.rel); timeEl.textContent=formatReplayLabel(st.rel); refreshSpeedUI(); };
+  const render = ()=>{ drawStartReplayFrame(rd, st.rel, st); slider.value=String(st.rel); timeEl.textContent=formatReplayLabel(st.rel); refreshSpeedUI(); };
   const start = ()=>{
     if(st.timer) clearInterval(st.timer);
     st.playing=true; playBtn.textContent='Pause';
@@ -3574,6 +3586,31 @@ function initStartReplayR(rd){
   slider.oninput = ()=>{ stop(); st.rel=parseFloat(slider.value)||-30; render(); };
   playBtn.onclick = ()=>{ st.playing ? stop() : start(); };
   Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.onclick = ()=>setSpeed(Number(k)); });
+
+  let pinch0=null;
+  const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+  const mid=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
+  canvas.ontouchstart=(e)=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      pinch0={d:dist(e.touches[0],e.touches[1]), m:mid(e.touches[0],e.touches[1]), z:st.zoom, x:st.panX, y:st.panY};
+      stop();
+    }
+  };
+  canvas.ontouchmove=(e)=>{
+    if(e.touches.length===2 && pinch0){
+      e.preventDefault();
+      const d=dist(e.touches[0],e.touches[1]);
+      const m=mid(e.touches[0],e.touches[1]);
+      const ratio=Math.max(0.8,Math.min(2.5,d/Math.max(1,pinch0.d)));
+      st.zoom=Math.max(1,Math.min(4,pinch0.z*ratio));
+      st.panX=pinch0.x + (m.x-pinch0.m.x);
+      st.panY=pinch0.y + (m.y-pinch0.m.y);
+      render();
+    }
+  };
+  canvas.ontouchend=(e)=>{ if(e.touches.length<2) pinch0=null; };
+
   window._startReplayStates[key]=st;
   render();
   start();
@@ -3604,8 +3641,8 @@ function drawT50R(rd){
   const cxOff=(Math.min(...allX)+Math.max(...allX))/2;
   const cyOff=(Math.min(...allY)+Math.max(...allY))/2;
   const plotCX=W/2, plotCY=H/2-18;
-  const tX=rx=>plotCX+(rx-cxOff)*scale;
-  const tY=ry=>plotCY-(ry-cyOff)*scale;
+  const tX=rx=>plotCX+((rx-cxOff)*scale)*z + panX;
+  const tY=ry=>plotCY-((ry-cyOff)*scale)*z + panY;
   const rx=tX(rcR.rx),ry=tY(rcR.ry),px=tX(pnR.rx),py=tY(pnR.ry);
 
   // Draw tracks from gun to T+50 (thin, faded)
@@ -4790,15 +4827,7 @@ function handleReachMarkClick(e, canvasEl){
     const rlDist = Math.round(hav(rd.PIN.lat, rd.PIN.lon, lat, lon));
     const rlB = brg(rd.PIN.lat, rd.PIN.lon, lat, lon);
     const twa = rd.WF != null ? Math.abs(((rlB - rd.WF + 180 + 360)%360)-180) : null;
-    // Update LEG LENGTH in strip
-    const legEl = document.querySelector(`#racePanel${rd._dayIdx}_${raceNum} .sc .sv`);
     const scElems = document.querySelectorAll(`#racePanel${rd._dayIdx}_${raceNum} .sc`);
-    // Find the "LEG LENGTH" sc
-    scElems.forEach(sc => {
-      if(sc.querySelector('.sl')?.textContent === 'LEG LENGTH'){
-        sc.querySelector('.sv').textContent = rlDist + 'm';
-      }
-    });
     // Update REACH LEG in strip
     scElems.forEach(sc => {
       if(sc.querySelector('.sl')?.textContent === 'REACH LEG'){

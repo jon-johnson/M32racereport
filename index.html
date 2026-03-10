@@ -2955,7 +2955,7 @@ function renderRacePanel(panelEl, rd){
     </tr></thead><tbody id="${l1BodyId}"></tbody></table></div>
 
     <!-- Course + Official results + Wind -->
-    <div class="course-and-right" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;align-items:start">
+    <div class="course-and-right" style="display:grid;grid-template-columns:minmax(360px,460px) minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;align-items:start">
       <div class="official-card">
         ${(()=>{
           const or=(OFFICIAL_RESULTS_BY_DAY[rd.event._dayIdx||0]||OFFICIAL_RESULTS_BY_DAY[0])[raceNum];

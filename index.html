@@ -98,6 +98,7 @@ canvas{display:block;width:100%}
 
 /* ── TABLES ── */
 table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}
+.start-table,.reach-table,.official-finish-table{font-size:12px}
 th{font-family:Orbitron,monospace;font-size:8px;font-weight:700;color:var(--muted);letter-spacing:1px;
   padding:6px 8px;border-bottom:1px solid var(--muted2);text-align:left;background:var(--bg3)}
 td{padding:5px 8px;border-bottom:1px solid var(--bg3)}
@@ -2347,7 +2348,7 @@ function renderL1(stats,wf){
     const c=COL[s.sail],rk=i===0?'g':i===1?'s':i===2?'b':'',gap=i===0?'—':`+${fmt(s.dur-lT)}`;
     const dp=(s.dist/mD*100).toFixed(1),sp=(s.sog/mS*100).toFixed(1);
     const p=PTS[s.sail],dq=p>=1500?'dqg':p>=500?'dqp':'dqs',tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="color:${c}">${s.sail}</span></div></td><td><div class="td"><span class="mn">${fmt(s.dur)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)} m</div></div></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td><td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td><td><div class="td">${s.heelSd!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heelSd/mHSd*100).toFixed(1)}%;background:${c}77"></div></div><div class="bv" style="color:${c}88">${(s.heelSd/mHSd*100).toFixed(0)}%</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s.sail}</span></div></td><td><div class="td"><span class="mn">${fmt(s.dur)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)} m</div></div></div></td><td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td><td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td><td><div class="td">${s.heelSd!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heelSd/mHSd*100).toFixed(1)}%;background:${c}77"></div></div><div class="bv" style="color:${c}88">${(s.heelSd/mHSd*100).toFixed(0)}%</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>`;
     tb.appendChild(tr);
   });
 
@@ -2356,7 +2357,7 @@ function renderL1(stats,wf){
 function renderFin(fO,l1O){
   const tb=document.getElementById('finBody'),wT=(FIN_TS[fO[0]]-(window.GUN||0))/1000;
   fO.forEach((s,i)=>{const c=COL[s],rk=i===0?'g':i===1?'s':i===2?'b':'',ft=(FIN_TS[s]-(window.GUN||0))/1000,gap=i===0?'—':`+${fmt(ft-wT)}`,l1p=l1O.indexOf(s)+1,p=PTS[s],dq=p>=1500?'dqg':p>=500?'dqp':'dqs',tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:16px;font-weight:700">P${l1p}</div></td><td><div class="td"><span class="dq ${dq}">${p>=1500?'GOOD':p>=500?'PART':'SPARSE'} · ${p} pts</span></div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td><td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">${gap}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:16px;font-weight:700">P${l1p}</div></td><td><div class="td"><span class="dq ${dq}">${p>=1500?'GOOD':p>=500?'PART':'SPARSE'} · ${p} pts</span></div></td>`;
     tb.appendChild(tr);
   });
 }
@@ -2366,7 +2367,7 @@ function renderPL(l1O,fO){
   fO.forEach(s=>{const c=COL[s],l1p=l1O.indexOf(s)+1,fp=fO.indexOf(s)+1,d=l1p-fp,cc=d>0?'cup':d<0?'cdn':'ceq',ct=d>0?`▲${d}`:d<0?`▼${Math.abs(d)}`:'—';
     const l1t=((rmTS[s]||MARK1_TS_FALLBACK[s]||(window.GUN||0)+200000)-(window.GUN||0))/1000,ft=(FIN_TS[s]-(window.GUN||0))/1000;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${l1p}</div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${fp}</div></td><td><div class="td"><span class="chip ${cc}">${ct}</span></div></td><td><div class="td"><span class="mn">${fmt(l1t)}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">+${fmt(ft-wT)}</span></div></td>`;
+    tr.innerHTML=`<td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${l1p}</div></td><td><div class="td" style="font-family:Orbitron,monospace;font-size:18px;font-weight:700">P${fp}</div></td><td><div class="td"><span class="chip ${cc}">${ct}</span></div></td><td><div class="td"><span class="mn">${fmt(l1t)}</span></div></td><td><div class="td"><span class="mn">${fmt(ft)}</span></div></td><td><div class="td"><span class="ms">+${fmt(ft-wT)}</span></div></td>`;
     tb.appendChild(tr);
   });
 }
@@ -2907,7 +2908,7 @@ function renderRacePanel(panelEl, rd){
     </div>
 
     <!-- Start maps — PAGE 1 end -->
-    <div class="sh">START LINE — at gun &amp; T+50</div>
+    <div class="sh">MAP VIEWS</div>
     <div class="map2">
       <div class="mc"><div class="mh">AT GUN · RC &amp; Pin ends · boat positions</div><canvas id="${cGunId}"></canvas></div>
       <div class="mc"><div class="mh">T + 0:50 — tracks + positions · avg speed · ranked</div><canvas id="${cT50Id}"></canvas></div>
@@ -2945,7 +2946,7 @@ function renderRacePanel(panelEl, rd){
 
     <!-- PAGE 2 — Leg 1 table first -->
     <div class="sh page2-start">LEG 1 — REACH ORDER at T+50s · ranked by dist from pin</div>
-    <div class="table-scroll"><table id="${l1TableId}"><thead><tr>
+    <div class="table-scroll"><table class="reach-table" id="${l1TableId}"><thead><tr>
       <th data-col="rank" style="cursor:pointer" onclick="sortTable('${l1TableId}','rank','asc',false)">#</th>
       <th>Boat</th>
       <th data-col="sailed" style="cursor:pointer" onclick="sortTable('${l1TableId}','sailed','desc',false)">Dist sailed ⇅</th>
@@ -2973,7 +2974,7 @@ function renderRacePanel(panelEl, rd){
               : delta<0 ? '<span style="color:#f87171;font-weight:700">&#9660;'+Math.abs(delta)+'</span>'
               : '<span style="color:var(--muted)">&mdash;</span>';
             const rpStr = rp!=null
-              ? '<span style="font-family:Orbitron,monospace;font-size:10px;color:var(--cyan)">'+rp+'</span>'
+              ? '<span style="font-family:Orbitron,monospace;font-size:11px;color:var(--cyan)">'+rp+'</span>'
               : '<span style="color:var(--muted)">&mdash;</span>';
             const c = COL[sail]||'#888';
             const tn = TEAM_NAMES[sail]||'';
@@ -2983,13 +2984,13 @@ function renderRacePanel(panelEl, rd){
               +'<td style="padding:2px 4px;white-space:nowrap;text-align:center">'+deltaStr+'</td>'
               +'<td style="padding:2px 6px">'
                 +'<span style="width:7px;height:7px;border-radius:50%;background:'+c+';display:inline-block;vertical-align:middle;margin-right:4px"></span>'
-                +'<span style="font-family:Orbitron,monospace;font-size:11px;font-weight:700;color:'+c+'">'+sail+'</span>'
+                +'<span style="font-family:Orbitron,monospace;font-size:13px;font-weight:700;color:'+c+'">'+sail+'</span>'
                 +'<span style="font-size:9px;color:var(--muted);margin-left:3px">'+tn+'</span>'
               +'</td>'
               +'</tr>';
           }).join('');
           return '<div class="sh" style="margin-top:0">OFFICIAL FINISH</div>'
-            +'<table style="width:100%;margin-bottom:6px">'
+            +'<table class="official-finish-table" style="width:100%;margin-bottom:6px">'
             +'<thead><tr>'
             +'<th style="width:24px;padding:2px 4px">Fin</th>'
             +'<th style="width:32px;padding:2px 4px">Reach</th>'
@@ -3010,7 +3011,7 @@ function renderRacePanel(panelEl, rd){
       </div>
 
       <div class="wind-card">
-        <div class="sh" style="font-size:7px;opacity:0.7;margin-top:2px">WIND INFERENCE</div>
+        <div class="sh" style="margin-top:0">WIND INFERENCE</div>
         <div class="mc">
           <div class="mh" style="font-size:7px">PORT/STBD TACK &amp; GYBE SEGMENTS · INFERRED DIRECTION</div>
           <canvas id="${cWindId}" style="display:block;margin:0 auto"></canvas>
@@ -3930,10 +3931,10 @@ function renderStartR(rd){
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
       <td><div class="td" style="flex-direction:column;align-items:flex-start;gap:2px">
         <div style="display:flex;align-items:center;gap:5px">
-          <span class="sn" style="color:${c}">${s.sail}</span>
+          <span class="sn" style="font-size:13px;color:${c}">${s.sail}</span>
           ${isOCS ? '<span style="font-size:8px;font-weight:700;color:#ff3355;font-family:Orbitron,monospace;background:rgba(255,51,85,.2);padding:1px 4px;border-radius:2px;border:1px solid #ff335555">OCS</span>' : ''}
         </div>
-        <span style="font-size:7px;color:var(--muted)">${TEAM_NAMES[s.sail]||''}</span>
+        <span style="font-size:9px;color:var(--muted)">${TEAM_NAMES[s.sail]||''}</span>
         ${dq?`<span style="font-size:6px;color:${dqCol};opacity:.7">${dq.score} · ${dq.coverage}%</span>`:''}
       </div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:12px;font-weight:700;color:${signedCol}">${s.distGun!=null?(s.distGun>=0?'+':'')+s.distGun.toFixed(1)+'m':'—'}</span></div></td>
@@ -3982,7 +3983,7 @@ function renderL1R(rd){
     tr.dataset.heelsd = String(s.heelSd ?? 9999);
     tr.innerHTML=`
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
-      <td><div class="td"><span class="sn" style="color:${c}">${s.sail}</span><br><span style="font-size:7px;color:var(--muted);letter-spacing:.5px">${TEAM_NAMES[s.sail]||''}</span></div></td>
+      <td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s.sail}</span><br><span style="font-size:9px;color:var(--muted);letter-spacing:.5px">${TEAM_NAMES[s.sail]||''}</span></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)}m</div></div></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td>
       <td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>
@@ -3998,7 +3999,7 @@ function renderL1R(rd){
     tr.style.opacity='0.45';
     tr.innerHTML=`
       <td><div class="td"><span class="rk">—</span></div></td>
-      <td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td>
+      <td><div class="td"><span class="sn" style="font-size:13px;color:${c}">${s}</span></div></td>
       <td><div class="td"><span style="color:var(--muted2);font-size:8px">NO MARK</span></div></td>
       <td colspan="3"><div class="td"><span style="color:var(--muted2);font-size:8px">mark not detected</span></div></td>
     `;

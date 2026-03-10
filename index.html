@@ -2937,9 +2937,9 @@ function renderRacePanel(panelEl, rd){
       <th data-col="rank" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','rank','asc',true)">#</th>
       <th>Boat</th>
       <th data-col="dtl" data-dir="desc" style="cursor:pointer" title="Click to sort. DTL is signed: positive = pre-start side (safe), negative = course side (OCS side)" onclick="sortTable('${startTableId}','dtl','desc',true)">DTL@Gun ⇅<br><span style="font-weight:400;font-size:7px">+ safe  − course</span></th>
-      <th data-col="linepct" data-dir="desc" style="cursor:pointer" title="0% = pin, 100% = boat" onclick="sortTable('${startTableId}','linepct','desc',true)">Line % ⇅<br><span style="font-weight:400;font-size:7px">0 pin · 100 boat</span></th>
       <th data-col="spd" data-dir="desc" style="cursor:pointer" onclick="sortTable('${startTableId}','spd','desc',true)">Speed@Gun ⇅</th>
       <th data-col="cross" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','cross','asc',true)">Line cross ⇅<br><span style="font-weight:400;font-size:7px">sec after gun</span></th>
+      <th data-col="linepct" data-dir="desc" style="cursor:pointer" title="0% = pin, 100% = boat" onclick="sortTable('${startTableId}','linepct','desc',true)">Line % ⇅<br><span style="font-weight:400;font-size:7px">0 pin · 100 boat</span></th>
       <th data-col="t95" data-dir="asc" style="cursor:pointer" onclick="sortTable('${startTableId}','t95','asc',true)">T→95% ⇅<br><span style="font-weight:400;font-size:7px">secs to reach speed</span></th>
     </tr></thead><tbody id="${startBodyId}"></tbody></table></div>
 
@@ -2948,8 +2948,6 @@ function renderRacePanel(panelEl, rd){
     <div class="table-scroll"><table id="${l1TableId}"><thead><tr>
       <th data-col="rank" style="cursor:pointer" onclick="sortTable('${l1TableId}','rank','asc',false)">#</th>
       <th>Boat</th>
-      <th data-col="dist" style="cursor:pointer" onclick="sortTable('${l1TableId}','dist','desc',false)">Dist from Pin ⇅</th>
-      <th data-col="gap" style="cursor:pointer" onclick="sortTable('${l1TableId}','gap','asc',false)">Gap@T+50 ⇅</th>
       <th data-col="sailed" style="cursor:pointer" onclick="sortTable('${l1TableId}','sailed','desc',false)">Dist sailed ⇅</th>
       <th data-col="sog" style="cursor:pointer" onclick="sortTable('${l1TableId}','sog','desc',false)">Avg SOG ⇅</th>
       <th data-col="heel" style="cursor:pointer" onclick="sortTable('${l1TableId}','heel','desc',false)">Avg heel ⇅</th>
@@ -3015,7 +3013,6 @@ function renderRacePanel(panelEl, rd){
           <div class="mh" style="font-size:7px">PORT/STBD TACK &amp; GYBE SEGMENTS · INFERRED DIRECTION</div>
           <canvas id="${cWindId}" style="display:block;margin:0 auto"></canvas>
         </div>
-      </div>
 
       ${(()=>{
         const inf = rd ? rd.rmInference : (rm && rm.inference);
@@ -3049,6 +3046,7 @@ function renderRacePanel(panelEl, rd){
           +'<div style="font-size:9px;color:var(--muted);margin-top:6px;font-style:italic">'+inf.reason+'</div>'
           +'</div>';
       })()}
+      </div>
     </div>
 
 
@@ -3377,7 +3375,7 @@ function drawGunR(rd){
   const rotDeg = rot * 180 / Math.PI;
   p2.forEach(d=>{
     const isOCS = ocsFromTelemetry ? ocsFromTelemetry.has(d.sail) : false;
-    const boatCol = reachRankColor(rd, d.sail);
+    const boatCol = gunMapBoatColor(rd, d.sail);
     const bx=tX(d.rx),by=tY(d.ry);
     // OCS: draw pulsing shaded circle behind boat
     if(isOCS){
@@ -3399,6 +3397,12 @@ function drawGunR(rd){
     ctx.lineTo(ex-Math.sin(hr+0.4)*6,ey+Math.cos(hr+0.4)*6);
     ctx.closePath();ctx.fill();ctx.restore();
     drawCat(ctx,bx,by,screenHdg,boatCol,d.sail,mpp,null);
+    ctx.save();
+    ctx.fillStyle=boatCol;
+    ctx.font='bold 8px Share Tech Mono';
+    ctx.textAlign='left';
+    ctx.fillText(`${d.sog.toFixed(1)} kts`, bx+14, by+3);
+    ctx.restore();
   });
   // Speed legend top-left
   ctx.save();p2.forEach((d,i)=>{
@@ -3587,29 +3591,14 @@ function initStartReplayR(rd){
   playBtn.onclick = ()=>{ st.playing ? stop() : start(); };
   Object.entries(speedBtns).forEach(([k,btn])=>{ if(btn) btn.onclick = ()=>setSpeed(Number(k)); });
 
-  let pinch0=null;
-  const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-  const mid=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
-  canvas.ontouchstart=(e)=>{
-    if(e.touches.length===2){
-      e.preventDefault();
-      pinch0={d:dist(e.touches[0],e.touches[1]), m:mid(e.touches[0],e.touches[1]), z:st.zoom, x:st.panX, y:st.panY};
-      stop();
-    }
+  canvas.onclick=()=>{
+    stop();
+    const steps=[1,1.4,1.8,2.4,3.2];
+    const idx=Math.max(0, steps.findIndex(v=>Math.abs(v-st.zoom)<0.12));
+    st.zoom = steps[(idx+1)%steps.length];
+    if(st.zoom===1){ st.panX=0; st.panY=0; }
+    render();
   };
-  canvas.ontouchmove=(e)=>{
-    if(e.touches.length===2 && pinch0){
-      e.preventDefault();
-      const d=dist(e.touches[0],e.touches[1]);
-      const m=mid(e.touches[0],e.touches[1]);
-      const ratio=Math.max(0.8,Math.min(2.5,d/Math.max(1,pinch0.d)));
-      st.zoom=Math.max(1,Math.min(4,pinch0.z*ratio));
-      st.panX=pinch0.x + (m.x-pinch0.m.x);
-      st.panY=pinch0.y + (m.y-pinch0.m.y);
-      render();
-    }
-  };
-  canvas.ontouchend=(e)=>{ if(e.touches.length<2) pinch0=null; };
 
   window._startReplayStates[key]=st;
   render();
@@ -3961,14 +3950,14 @@ function renderStartR(rd){
       </div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:12px;font-weight:700;color:${signedCol}">${s.distGun!=null?(s.distGun>=0?'+':'')+s.distGun.toFixed(1)+'m':'—'}</span></div></td>
       <td><div class="td"><div class="br">
-        <div class="bb"><div class="bf" style="width:${linePctBar}%;background:${c}"></div></div>
-        <div class="bv" style="color:${c}">${s.linePct!=null?s.linePct.toFixed(0)+'%':'—'}</div>
-      </div></div></td>
-      <td><div class="td"><div class="br">
         <div class="bb"><div class="bf" style="width:${spdBar}%;background:${c}"></div></div>
         <div class="bv" style="color:${c}">${s.sogGun!=null?s.sogGun.toFixed(1)+'kts':'—'}</div>
       </div></div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:11px;color:${c}">${s.crossingTime!=null?'+'+s.crossingTime.toFixed(1)+'s':'—'}</span></div></td>
+      <td><div class="td"><div class="br">
+        <div class="bb"><div class="bf" style="width:${linePctBar}%;background:${c}"></div></div>
+        <div class="bv" style="color:${c}">${s.linePct!=null?s.linePct.toFixed(0)+'%':'—'}</div>
+      </div></div></td>
       <td><div class="td"><span style="font-family:Orbitron,monospace;font-size:11px;color:${t95Col}">${s.accel!=null?s.accel.toFixed(1)+'s':'—'}</span></div></td>
     `;
     tb.appendChild(tr);
@@ -4006,8 +3995,6 @@ function renderL1R(rd){
     tr.innerHTML=`
       <td><div class="td"><span class="rk ${rk}">#${i+1}</span></div></td>
       <td><div class="td"><span class="sn" style="color:${c}">${s.sail}</span><br><span style="font-size:7px;color:var(--muted);letter-spacing:.5px">${TEAM_NAMES[s.sail]||''}</span></div></td>
-      <td><div class="td"><span class="mn" style="font-size:9px">${Math.round(s.distFromPin)}m</span></div></td>
-      <td><div class="td"><span class="ms">${gap}</span></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${dp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${Math.round(s.dist)}m</div></div></div></td>
       <td><div class="td"><div class="br"><div class="bb"><div class="bf" style="width:${sp}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.sog.toFixed(2)} kts</div></div></div></td>
       <td><div class="td">${s.heel!=null?`<div class="br"><div class="bb"><div class="bf" style="width:${(s.heel/20*100).toFixed(1)}%;background:${c}"></div></div><div class="bv" style="color:${c}">${s.heel.toFixed(1)}°</div></div>`:"<span style='color:var(--muted2)'>—</span>"}</div></td>
@@ -4025,7 +4012,7 @@ function renderL1R(rd){
       <td><div class="td"><span class="rk">—</span></div></td>
       <td><div class="td"><span class="sn" style="color:${c}">${s}</span></div></td>
       <td><div class="td"><span style="color:var(--muted2);font-size:8px">NO MARK</span></div></td>
-      <td colspan="5"><div class="td"><span style="color:var(--muted2);font-size:8px">mark not detected</span></div></td>
+      <td colspan="3"><div class="td"><span style="color:var(--muted2);font-size:8px">mark not detected</span></div></td>
     `;
     tb.appendChild(tr);
   });
